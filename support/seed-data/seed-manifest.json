@@ -1,0 +1,7 @@
+{
+  "propertiesFile": "images/properties.json",
+  "statusesFile": "images/properties-statuses.json",
+  "imagesSourceDirectory": "images/properties",
+  "imagesPublicDirectory": "wwwroot/images/properties",
+  "imagesPublicBaseUrl": "/images/properties"
+}

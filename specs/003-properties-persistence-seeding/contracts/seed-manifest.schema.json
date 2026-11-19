@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "seed-manifest.schema.json",
+  "title": "Manifiesto de datos iniciales",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "propertiesFile",
+    "statusesFile",
+    "imagesSourceDirectory",
+    "imagesPublicDirectory",
+    "imagesPublicBaseUrl"
+  ],
+  "properties": {
+    "propertiesFile": {
+      "type": "string",
+      "minLength": 1
+    },
+    "statusesFile": {
+      "type": "string",
+      "minLength": 1
+    },
+    "imagesSourceDirectory": {
+      "type": "string",
+      "minLength": 1
+    },
+    "imagesPublicDirectory": {
+      "type": "string",
+      "pattern": "^wwwroot/"
+    },
+    "imagesPublicBaseUrl": {
+      "type": "string",
+      "pattern": "^/images/properties/?$"
+    }
+  }
+}
