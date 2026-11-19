@@ -1,5 +1,6 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using RealtorApi.Infrastructure.Endpoints;
 using RealtorApi.Infrastructure.Handlers;
 using RealtorApi.Infrastructure.Persistence;
@@ -29,6 +30,19 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+var assetsDirectoryCandidates = new[]
+{
+    Path.Combine(app.Environment.ContentRootPath, "wwwroot", "assets", "properties"),
+    Path.Combine(AppContext.BaseDirectory, "wwwroot", "assets", "properties"),
+    Path.Combine(AppContext.BaseDirectory, "seed-data", "images", "properties"),
+    Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, "..", "..", "..", "..", "support", "seed-data", "images", "properties"))
+};
+var assetsDirectory = assetsDirectoryCandidates.First(Directory.Exists);
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(assetsDirectory),
+    RequestPath = "/assets/properties"
+});
 app.MapSliceEndpoints();
 
 await app.MigrateAsync();

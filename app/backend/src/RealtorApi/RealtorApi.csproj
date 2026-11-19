@@ -24,6 +24,7 @@
     <Content Include="..\..\..\..\support\seed-data\images\properties-statuses.json" Link="seed-data\images\properties-statuses.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="..\..\..\..\support\seed-data\images\properties\**\*" Link="seed-data\images\properties\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <None Include="..\..\..\..\support\seed-data\images\properties\**\*" Link="wwwroot\images\properties\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="..\..\..\..\support\seed-data\images\properties\**\*" Link="wwwroot\assets\properties\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

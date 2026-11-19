@@ -13,7 +13,10 @@ public static class HandlerRegistration
             .ToArray();
 
         foreach (var handlerType in handlerTypes)
+        {
             services.TryAddEnumerable(ServiceDescriptor.Scoped(typeof(IHandler), handlerType));
+            services.TryAdd(ServiceDescriptor.Scoped(handlerType, handlerType));
+        }
 
         return services;
     }

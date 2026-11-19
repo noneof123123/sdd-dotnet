@@ -1,0 +1,7 @@
+### Listar propiedades con valores por defecto
+GET http://localhost:5023/api/properties
+Accept: application/json
+
+### Listar primera página con tamaño explícito
+GET http://localhost:5023/api/properties?page=1&pageSize=6
+Accept: application/json
