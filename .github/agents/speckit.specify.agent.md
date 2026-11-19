@@ -111,6 +111,10 @@ Given that feature description, do this:
 
 4. Load the resolved active `spec-template` file to understand required sections.
 
+   La plantilla establece `Estado: Borrador`; conserva este estado al crear la spec. No
+   marques una spec como aprobada durante su creación. La aprobación solo ocurre después
+   de la revisión satisfactoria descrita en el agente `speckit.analyze`.
+
 5. **IF EXISTS**: Load `.specify/memory/constitution.md` for project principles and governance constraints.
 
 6. Follow this execution flow:

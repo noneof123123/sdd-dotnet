@@ -50,7 +50,11 @@ Identify inconsistencies, duplications, ambiguities, and underspecified items ac
 
 ## Operating Constraints
 
-**STRICTLY READ-ONLY**: Do **not** modify any files. Output a structured analysis report. Offer an optional remediation plan (user must explicitly approve before any follow-up editing commands would be invoked manually).
+**Solo lectura con excepción acotada de estado**: No modifiques artefactos de análisis.
+Después de emitir el informe, únicamente se permite actualizar automáticamente el campo
+`Estado` de `spec.md` conforme a las reglas de aprobación descritas en «Aprobación de spec».
+Las correcciones y remediaciones requieren aprobación explícita del usuario antes de
+invocar comandos de edición posteriores.
 
 **Constitution Authority**: The project constitution (`.specify/memory/constitution.md`) is **non-negotiable** within this analysis scope. Constitution conflicts are automatically CRITICAL and require adjustment of the spec, plan, or tasks—not dilution, reinterpretation, or silent ignoring of the principle. If a principle itself needs to change, that must occur in a separate, explicit constitution update outside `/speckit.analyze`.
 
@@ -192,11 +196,21 @@ At end of report, output a concise Next Actions block:
 - If only LOW/MEDIUM: User may proceed, but provide improvement suggestions
 - Provide explicit command suggestions: e.g., "Run /speckit.specify with refinement", "Run /speckit.plan to adjust architecture", "Manually edit tasks.md to add coverage for 'performance-metrics'"
 
-### 8. Offer Remediation
+### 8. Aprobación de spec
+
+- Si no hay hallazgos CRITICAL ni HIGH, pide al responsable humano que apruebe o rechace
+  explícitamente la spec tras revisar el informe.
+- Solo ante una aprobación explícita, y si el estado actual es `Borrador`, actualiza
+  automáticamente `Estado` a `Aprobada`. Informa la transición realizada.
+- Si se rechaza, no hay respuesta afirmativa o el estado actual no es `Borrador`, no alteres
+  el estado; reporta el estado actual y la causa. Nunca omitas ni reviertas una transición.
+- Si existen hallazgos CRITICAL o HIGH, no solicites aprobación ni cambies el estado.
+
+### 9. Offer Remediation
 
 Ask the user: "Would you like me to suggest concrete remediation edits for the top N issues?" (Do NOT apply them automatically.)
 
-### 9. Check for extension hooks
+### 10. Check for extension hooks
 
 After reporting, check if `.specify/extensions.yml` exists in the project root.
 - If it exists, read it and look for entries under the `hooks.after_analyze` key

@@ -1,14 +1,14 @@
 <!--
 Informe de impacto de sincronización
-- Cambio de versión: plantilla sin versión adoptada → 1.0.0 (constitución inicial).
-- Principios incorporados: desarrollo guiado por especificaciones; arquitectura de slices
-	verticales; contratos explícitos; frontend Blazor; calidad y seguridad verificables.
-- Secciones añadidas: Restricciones arquitectónicas y tecnológicas; Flujo de desarrollo y
-	calidad.
+- Cambio de versión: 1.0.0 → 1.1.0 (MINOR; se añade gobierno operativo del ciclo de estados).
+- Principios modificados: II. Spec-Driven Development (No Negociable) — se precisa la
+  aprobación de revisión y su transición de estado.
+- Secciones añadidas: Ciclo de estado de specs.
 - Secciones eliminadas: ninguna.
-- Revisión de plantillas: ✅ plan-template.md, spec-template.md y tasks-template.md revisadas;
-	no requieren cambios. La carpeta templates/commands/ no existe. ✅ Se revisaron las
-	instrucciones de agentes relevantes bajo .github/agents/.
+- Plantillas y flujos: ✅ spec-template.md; ✅ speckit.analyze.agent.md;
+  ✅ speckit.implement.agent.md; ✅ plan-template.md y tasks-template.md revisados, sin
+  cambios necesarios. La carpeta .specify/templates/commands/ y .specify/extensions.yml
+  no existen; no se configuran hooks.
 - Pendientes: ninguno.
 -->
 
@@ -36,6 +36,9 @@ Para specs fundacionales o de alto impacto se recomienda:
 speckit.specify -> speckit.clarify -> speckit.plan -> speckit.analyze -> speckit.tasks -> speckit.implement
 
 Ninguna fase obligatoria puede saltarse.
+
+La aprobación de una revisión de spec DEBE reflejarse mediante la transición automática
+de estado definida en «Ciclo de estado de specs»; no se permite editar el estado manualmente.
 
 ### III. Arquitectura Canónica de Backend y Frontend
 El backend DEBE organizarse por features y casos de uso con Vertical Slice Architecture.
@@ -116,6 +119,38 @@ Antes de implementar:
 5. Implementar solo alcance aprobado.
 6. Verificar resultado.
 7. Marcar tarea como X solo tras verificación.
+
+### Ciclo de estado de specs
+
+Cada spec DEBE declarar uno de estos estados canónicos en el campo `Estado`: Borrador,
+Aprobada, En implementación o Implementada. La plantilla inicia toda spec en Borrador.
+Los comandos del flujo DEBEN actualizar este campo automáticamente al ocurrir el evento
+que autoriza la transición; ninguna transición requiere edición manual.
+
+Solo se permiten estas transiciones, en este orden:
+
+1. **Borrador → Aprobada**: tras una revisión de spec satisfactoria y la aprobación
+	 explícita del responsable humano.
+2. **Aprobada → En implementación**: al iniciar `speckit.implement` para esa spec.
+3. **En implementación → Implementada**: al finalizar la implementación y superar todas
+	 las validaciones de cierre.
+
+No se permiten saltos, retrocesos ni otros valores. El agente DEBE detenerse y reportar
+el estado y la transición inválidos si el estado actual no habilita la transición solicitada.
+
+Una spec solo puede pasar a **Implementada** cuando se cumplen simultáneamente estas
+condiciones:
+
+- Todas las tareas de `tasks.md` están marcadas como completadas (`[X]` o `[x]`); no queda
+	ninguna tarea `- [ ]`.
+- `quickstart.md` contiene evidencia trazable de validación ejecutada con éxito, incluidos
+	la fecha, los comandos o pasos ejecutados y sus resultados.
+- La verificación final de la implementación no reporta fallos bloqueantes.
+
+Si falta cualquiera de estas condiciones, el agente DEBE conservar el estado **En
+implementación**, no declarar cerrada la implementación y reportar explícitamente cada
+causa del bloqueo. La evidencia debe corresponder a las validaciones realmente ejecutadas;
+no basta con instrucciones esperadas ni resultados supuestos.
 
 Reglas de secuencia obligatorias:
 
@@ -222,4 +257,4 @@ Está prohibido al agente mover archivos por iniciativa propia, renombrar carpet
 
 La única resolución legítima es la decisión humana documentada vía enmienda constitucional o ajuste explícito de convención local.
 
-**Versión**: 1.0.0 | **Ratificada**: 2026-11-18 | **Última enmienda**: 2026-11-18
+**Versión**: 1.1.0 | **Ratificada**: 2026-11-18 | **Última enmienda**: 2026-11-19

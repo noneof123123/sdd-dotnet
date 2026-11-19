@@ -46,15 +46,25 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Outline
 
-1. Run `.specify/scripts/powershell/check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks` from repo root and parse FEATURE_DIR and AVAILABLE_DOCS list. All paths must be absolute. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
+0. **Transición de estado al iniciar**:
+  - Ejecuta `.specify/scripts/powershell/check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks` desde la raíz y analiza `FEATURE_DIR` y `AVAILABLE_DOCS`. Todas las rutas deben ser absolutas.
+   - Antes de ejecutar cualquier tarea, lee el campo `Estado` de `FEATURE_DIR/spec.md`.
+   - Solo se puede iniciar desde `Aprobada`. Si el estado es distinto, detén la ejecución,
+     no cambies el estado y reporta el valor encontrado y la transición requerida.
+   - Cambia automáticamente `Estado` de `Aprobada` a `En implementación` y guarda el spec.
+     Esta es la primera acción de implementación; no solicites una edición manual.
+   - Registra en el informe de progreso que la transición ocurrió. Si no puede guardarse el
+     estado, detente antes de ejecutar tareas y explica la causa.
 
-2. **Check checklists status** (if FEATURE_DIR/checklists/ exists):
-   - Scan all checklist files in the checklists/ directory
-   - For each checklist, count:
-     - Total items: All lines matching `- [ ]` or `- [X]` or `- [x]`
-     - Completed items: Lines matching `- [X]` or `- [x]`
-     - Incomplete items: Lines matching `- [ ]`
-   - Create a status table:
+1. Usa `FEATURE_DIR` y `AVAILABLE_DOCS` resueltos en el paso anterior. Para comillas simples en argumentos de comandos posteriores, usa el escape apropiado o comillas dobles.
+
+2. **Revisa el estado de las listas de verificación** (si existe FEATURE_DIR/checklists/):
+  - Revisa todos los archivos de listas de verificación del directorio.
+  - Para cada lista, cuenta:
+    - Elementos totales: todas las líneas con `- [ ]`, `- [X]` o `- [x]`.
+    - Elementos completados: líneas con `- [X]` o `- [x]`.
+    - Elementos incompletos: líneas con `- [ ]`.
+  - Crea una tabla de estado:
 
      ```text
      | Checklist | Total | Completed | Incomplete | Status |
@@ -64,20 +74,20 @@ You **MUST** consider the user input before proceeding (if not empty).
      | security.md | 6   | 6         | 0          | ✓ PASS |
      ```
 
-   - Calculate overall status:
-     - **PASS**: All checklists have 0 incomplete items
-     - **FAIL**: One or more checklists have incomplete items
+    - Calcula el estado general:
+      - **APROBADO**: todas las listas tienen cero elementos incompletos.
+      - **FALLIDO**: una o más listas tienen elementos incompletos.
 
-   - **If any checklist is incomplete**:
-     - Display the table with incomplete item counts
-     - **STOP** and ask: "Some checklists are incomplete. Do you want to proceed with implementation anyway? (yes/no)"
-     - Wait for user response before continuing
-     - If user says "no" or "wait" or "stop", halt execution
-     - If user says "yes" or "proceed" or "continue", proceed to step 3
+    - **Si alguna lista está incompleta**:
+      - Muestra la tabla con la cantidad de elementos incompletos.
+      - **DETENTE** y pregunta: «Hay listas de verificación incompletas. ¿Quieres continuar con la implementación? (sí/no)»
+      - Espera la respuesta antes de continuar.
+      - Si responde «no» o pide detenerse, termina la ejecución.
+      - Si responde «sí», continúa con el paso 3.
 
-   - **If all checklists are complete**:
-     - Display the table showing all checklists passed
-     - Automatically proceed to step 3
+   - **Si todas las listas están completas**:
+     - Muestra la tabla con todas las listas aprobadas.
+     - Continúa automáticamente con el paso 3.
 
 3. Load and analyze the implementation context:
    - **REQUIRED**: Read tasks.md for the complete task list and execution plan
@@ -166,6 +176,21 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Validate that tests pass and coverage meets requirements
    - Confirm the implementation follows the technical plan
 
+10. **Transición de estado al cerrar**:
+   - No intentes la transición si alguna validación de cierre falla.
+   - Comprueba que cada tarea de `tasks.md` esté marcada `[X]` o `[x]`; cualquier tarea
+     `- [ ]` bloquea el cierre.
+   - Comprueba que `quickstart.md` exista y contenga evidencia de validación realmente
+     ejecutada: fecha, comandos o pasos y resultados satisfactorios. Ejecuta las
+     validaciones prescritas y registra sus resultados en `quickstart.md` antes de evaluar
+     esta condición. No cuentes instrucciones sin resultados como evidencia.
+   - Si las tareas están completas, la evidencia existe y todas las validaciones pasan,
+     cambia automáticamente `Estado` de `En implementación` a `Implementada`.
+   - Si falta una condición o falla una validación, conserva `En implementación`, no
+     declares completada la iniciativa e informa cada bloqueo con su causa concreta.
+   - No realices saltos de estado ni modifiques el campo manualmente fuera de estas
+     transiciones automáticas. Incluye la transición realizada o el bloqueo en el informe.
+
 Note: This command assumes a complete task breakdown exists in tasks.md. If tasks are incomplete or missing, suggest running `/speckit.tasks` first to regenerate the task list.
 
 ## Mandatory Post-Execution Hooks
@@ -209,5 +234,6 @@ Report final status with summary of completed work.
 
 - [ ] All tasks in tasks.md completed and marked `[X]`
 - [ ] Implementation validated against specification, plan, and test coverage
+- [ ] La spec solo queda `Implementada` cuando todas las tareas están completas y la evidencia de validación está registrada en quickstart.md; de lo contrario, permanece `En implementación` con las causas explícitas del bloqueo.
 - [ ] Extension hooks dispatched or skipped according to the rules in Mandatory Post-Execution Hooks above
 - [ ] Completion reported to user with summary of completed work
