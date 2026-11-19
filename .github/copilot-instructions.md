@@ -1,7 +1,7 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan:
-`specs/001-solution-foundation/plan.md`
+`specs/002-foundation-backend/plan.md`
 <!-- SPECKIT END -->
 
 # Instrucciones globales del proyecto

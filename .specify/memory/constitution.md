@@ -104,7 +104,7 @@ La carpeta .specify se reserva para infraestructura operativa de spec-kit.
 
 ## Método de Trabajo
 
-Cada iniciativa DEBE contener exactamente tres archivos:
+Cada iniciativa DEBE contener mínimo tres archivos:
 
 - spec.md
 - plan.md

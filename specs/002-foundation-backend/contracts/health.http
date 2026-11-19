@@ -1,0 +1,21 @@
+### GET /health
+
+**Request**
+
+```http
+GET /health HTTP/1.1
+Accept: application/json
+```
+
+**Success 200**
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{"status":"healthy"}
+```
+
+**Nota**
+
+`/health` es una sonda de infraestructura implementada como `ISlice`. No representa una feature de negocio y no depende de persistencia.
