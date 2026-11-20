@@ -157,6 +157,9 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] TXXX [P] Additional unit tests (if requested) in tests/unit/
 - [ ] TXXX Security hardening
 - [ ] TXXX Run quickstart.md validation
+- [ ] TXXX Regenerar y validar contrato OpenAPI v1: ejecutar `support/scripts/generate-openapi-v1.sh` y versionar `app/backend/src/RealtorApi/wwwroot/openapi/v1.json` (obligatorio si la spec crea o modifica endpoints)
+
+> **Nota obligatoria:** Esta tarea es obligatoria en toda spec que toque el backend. El cierre de la spec exige que `dotnet test` pase en verde, incluido `OpenApiDriftTests` como red de seguridad anti-deriva.
 
 ---
 

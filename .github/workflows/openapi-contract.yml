@@ -1,0 +1,44 @@
+name: Contrato OpenAPI v1
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validar-openapi:
+    name: Regenerar y validar contrato OpenAPI v1
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obtener código
+        uses: actions/checkout@v4
+
+      # Usa el SDK exacto declarado en global.json.
+      - name: Configurar .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      # Redocly se instala bajo demanda mediante npx.
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Restaurar herramientas locales
+        run: dotnet tool restore
+
+      - name: Regenerar y validar OpenAPI v1
+        run: bash support/scripts/generate-openapi-v1.sh
+
+      - name: Ejecutar pruebas
+        run: dotnet test app/Realtor.sln
+
+      # Si la regeneración cambia el archivo versionado, el contrato está desincronizado.
+      - name: Verificar ausencia de drift
+        run: git diff --exit-code -- app/backend/src/RealtorApi/wwwroot/openapi/v1.json
