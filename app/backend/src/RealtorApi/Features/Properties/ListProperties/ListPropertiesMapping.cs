@@ -14,7 +14,7 @@ public static class ListPropertiesMapping
         int bedroomCount,
         int bathroomCount,
         decimal areaSquareMeters,
-        string persistedImageUrl,
+        string? persistedImageUrl,
         HttpRequest request)
     {
         var fileName = ResolveFileName(persistedImageUrl);
@@ -35,7 +35,7 @@ public static class ListPropertiesMapping
             imageUrl);
     }
 
-    private static string ResolveFileName(string persistedImageUrl)
+    private static string ResolveFileName(string? persistedImageUrl)
     {
         if (string.IsNullOrWhiteSpace(persistedImageUrl))
             return string.Empty;

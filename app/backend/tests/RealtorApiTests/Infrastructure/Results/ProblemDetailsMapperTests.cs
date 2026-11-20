@@ -10,6 +10,7 @@ public sealed class ProblemDetailsMapperTests
     [InlineData(ErrorType.Validation, StatusCodes.Status400BadRequest)]
     [InlineData(ErrorType.NotFound, StatusCodes.Status404NotFound)]
     [InlineData(ErrorType.Conflict, StatusCodes.Status409Conflict)]
+    [InlineData(ErrorType.Internal, StatusCodes.Status500InternalServerError)]
     public void ResultError_MapsToExpectedStatus(ErrorType type, int expectedStatus)
     {
         var error = type switch
@@ -17,12 +18,24 @@ public sealed class ProblemDetailsMapperTests
             ErrorType.Validation => Error.Validation("validation", "Detalle seguro"),
             ErrorType.NotFound => Error.NotFound("not_found", "Detalle seguro"),
             ErrorType.Conflict => Error.Conflict("conflict", "Detalle seguro"),
+            ErrorType.Internal => Error.Internal(),
             _ => throw new ArgumentOutOfRangeException(nameof(type))
         };
 
         var response = ProblemDetailsMapper.ToProblemDetails(Result.Failure(error));
 
         Assert.Equal(expectedStatus, GetStatusCode(response));
+    }
+
+    [Fact]
+    public void GenericResultError_MapsInternalWithoutTechnicalDetail()
+    {
+        var response = ProblemDetailsMapper.ToProblemDetails(Result<int>.Failure(Error.Internal()));
+
+        var problem = Assert.IsType<ProblemHttpResult>(response);
+        Assert.Equal(StatusCodes.Status500InternalServerError, problem.StatusCode);
+        Assert.Equal("Error interno", problem.ProblemDetails.Title);
+        Assert.Null(problem.ProblemDetails.Detail);
     }
 
     private static int GetStatusCode(IResult result)
@@ -32,6 +45,7 @@ public sealed class ProblemDetailsMapperTests
             BadRequest<Microsoft.AspNetCore.Mvc.ValidationProblemDetails> response => response.StatusCode,
             NotFound<Microsoft.AspNetCore.Mvc.ProblemDetails> response => response.StatusCode,
             Conflict<Microsoft.AspNetCore.Mvc.ProblemDetails> response => response.StatusCode,
+            ProblemHttpResult response => response.StatusCode,
             _ => throw new InvalidOperationException(result.GetType().Name)
         };
     }

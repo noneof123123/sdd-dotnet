@@ -23,7 +23,7 @@ public sealed class PropertyConfiguration : IEntityTypeConfiguration<Property>
         builder.Property(property => property.BedroomCount).IsRequired();
         builder.Property(property => property.BathroomCount).IsRequired();
         builder.Property(property => property.AreaSquareMeters).HasPrecision(12, 2).IsRequired();
-        builder.Property(property => property.ImageUrl).HasMaxLength(1000).IsRequired();
+        builder.Property(property => property.ImageUrl).HasMaxLength(1000).IsRequired(false);
         builder.Property(property => property.CreatedAt).IsRequired();
         builder.Property(property => property.UpdatedAt).IsRequired(false);
 

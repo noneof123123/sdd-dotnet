@@ -22,10 +22,11 @@ public sealed class ListPropertiesMappingTests
     }
 
     [Theory]
+    [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
     [InlineData("..")]
-    public void ToResponse_ReturnsEmptyForInvalidImageName(string imageUrl)
+    public void ToResponse_ReturnsEmptyForInvalidImageName(string? imageUrl)
     {
         var httpContext = new DefaultHttpContext();
 

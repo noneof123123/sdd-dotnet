@@ -50,6 +50,21 @@ public sealed class PropertyPersistenceTests
     }
 
     [Fact]
+    public void PropertyConfiguration_AllowsNullImageUrl()
+    {
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        using var context = new AppDbContext(options);
+        var imageUrl = context.Model.FindEntityType(typeof(Property))!
+            .FindProperty(nameof(Property.ImageUrl));
+
+        Assert.NotNull(imageUrl);
+        Assert.True(imageUrl!.IsNullable);
+    }
+
+    [Fact]
     public async Task DatabaseSeederAsync_IsIdempotent()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
@@ -65,7 +80,7 @@ public sealed class PropertyPersistenceTests
     }
 
     [Fact]
-    public void MigrationSources_ExistAsASetOfExactlyOne()
+    public void MigrationSources_ContainCreationAndImageUrlNullableSequence()
     {
         var repositoryRoot = FindRepositoryRoot();
         var migrationDirectory = Path.Combine(
@@ -75,11 +90,18 @@ public sealed class PropertyPersistenceTests
         var migrations = Directory.GetFiles(migrationDirectory, "*_*.cs")
             .Where(path => !path.EndsWith("Snapshot.cs", StringComparison.Ordinal))
             .Where(path => !path.EndsWith(".Designer.cs", StringComparison.Ordinal))
+            .OrderBy(path => path, StringComparer.Ordinal)
             .ToArray();
 
-        Assert.Single(migrations);
-        Assert.Contains("CreateTable", File.ReadAllText(migrations[0]), StringComparison.Ordinal);
-        Assert.Contains("Down", File.ReadAllText(migrations[0]), StringComparison.Ordinal);
+        Assert.Equal(2, migrations.Length);
+        Assert.All(migrations, path => Assert.Contains("Down", File.ReadAllText(path), StringComparison.Ordinal));
+
+        var createSource = File.ReadAllText(migrations[0]);
+        var alterSource = File.ReadAllText(migrations[1]);
+
+        Assert.Contains("CreateTable", createSource, StringComparison.Ordinal);
+        Assert.Contains("AlterColumn<string>", alterSource, StringComparison.Ordinal);
+        Assert.Contains("ImageUrl", alterSource, StringComparison.Ordinal);
     }
 
     [Fact]

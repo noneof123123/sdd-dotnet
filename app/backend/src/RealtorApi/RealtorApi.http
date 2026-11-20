@@ -5,3 +5,256 @@ Accept: application/json
 ### Listar primera página con tamaño explícito
 GET http://localhost:5023/api/properties?page=1&pageSize=6
 Accept: application/json
+
+### Crear propiedad sin imagen
+POST http://localhost:5023/api/properties
+Content-Type: multipart/form-data; boundary=realtor-create
+
+--realtor-create
+Content-Disposition: form-data; name="title"
+
+Casa de prueba
+--realtor-create
+Content-Disposition: form-data; name="description"
+
+Propiedad creada sin fotografía.
+--realtor-create
+Content-Disposition: form-data; name="address"
+
+Calle Central 123
+--realtor-create
+Content-Disposition: form-data; name="price"
+
+250000.00
+--realtor-create
+Content-Disposition: form-data; name="status"
+
+Available
+--realtor-create
+Content-Disposition: form-data; name="bedroomCount"
+
+3
+--realtor-create
+Content-Disposition: form-data; name="bathroomCount"
+
+2
+--realtor-create
+Content-Disposition: form-data; name="areaSquareMeters"
+
+140.50
+--realtor-create--
+
+### Crear propiedad con PNG válido
+POST http://localhost:5023/api/properties
+Content-Type: multipart/form-data; boundary=realtor-create
+
+--realtor-create
+Content-Disposition: form-data; name="title"
+
+Casa con fotografía
+--realtor-create
+Content-Disposition: form-data; name="description"
+
+Propiedad creada con PNG válido.
+--realtor-create
+Content-Disposition: form-data; name="address"
+
+Avenida Central 456
+--realtor-create
+Content-Disposition: form-data; name="price"
+
+320000.00
+--realtor-create
+Content-Disposition: form-data; name="status"
+
+Available
+--realtor-create
+Content-Disposition: form-data; name="bedroomCount"
+
+4
+--realtor-create
+Content-Disposition: form-data; name="bathroomCount"
+
+3
+--realtor-create
+Content-Disposition: form-data; name="areaSquareMeters"
+
+180.00
+--realtor-create
+Content-Disposition: form-data; name="image"; filename="property.png"
+Content-Type: image/png
+
+< ./support/seed-data/images/properties/1.png
+--realtor-create--
+
+### Crear propiedad con JPG/JPEG válido
+POST http://localhost:5023/api/properties
+Content-Type: multipart/form-data; boundary=realtor-create
+
+--realtor-create
+Content-Disposition: form-data; name="title"
+
+Casa con JPG
+--realtor-create
+Content-Disposition: form-data; name="description"
+
+Propiedad creada con JPG/JPEG válido.
+--realtor-create
+Content-Disposition: form-data; name="address"
+
+Calle Secundaria 789
+--realtor-create
+Content-Disposition: form-data; name="price"
+
+275000.00
+--realtor-create
+Content-Disposition: form-data; name="status"
+
+Rented
+--realtor-create
+Content-Disposition: form-data; name="bedroomCount"
+
+2
+--realtor-create
+Content-Disposition: form-data; name="bathroomCount"
+
+1
+--realtor-create
+Content-Disposition: form-data; name="areaSquareMeters"
+
+95.00
+--realtor-create
+Content-Disposition: form-data; name="image"; filename="property.jpg"
+Content-Type: image/jpeg
+
+< ./ruta/local/propiedad.jpg
+--realtor-create--
+
+### Error: estado no permitido
+POST http://localhost:5023/api/properties
+Content-Type: multipart/form-data; boundary=realtor-error
+
+--realtor-error
+Content-Disposition: form-data; name="title"
+
+Casa inválida
+--realtor-error
+Content-Disposition: form-data; name="description"
+
+Estado no permitido.
+--realtor-error
+Content-Disposition: form-data; name="address"
+
+Calle Central 123
+--realtor-error
+Content-Disposition: form-data; name="price"
+
+250000.00
+--realtor-error
+Content-Disposition: form-data; name="status"
+
+Unknown
+--realtor-error
+Content-Disposition: form-data; name="bedroomCount"
+
+3
+--realtor-error
+Content-Disposition: form-data; name="bathroomCount"
+
+2
+--realtor-error
+Content-Disposition: form-data; name="areaSquareMeters"
+
+140.50
+--realtor-error--
+
+### Error: formato de imagen no admitido
+POST http://localhost:5023/api/properties
+Content-Type: multipart/form-data; boundary=realtor-error
+
+--realtor-error
+Content-Disposition: form-data; name="title"
+
+Casa con GIF
+--realtor-error
+Content-Disposition: form-data; name="description"
+
+Formato no admitido.
+--realtor-error
+Content-Disposition: form-data; name="address"
+
+Calle Central 123
+--realtor-error
+Content-Disposition: form-data; name="price"
+
+250000.00
+--realtor-error
+Content-Disposition: form-data; name="status"
+
+Available
+--realtor-error
+Content-Disposition: form-data; name="bedroomCount"
+
+3
+--realtor-error
+Content-Disposition: form-data; name="bathroomCount"
+
+2
+--realtor-error
+Content-Disposition: form-data; name="areaSquareMeters"
+
+140.50
+--realtor-error
+Content-Disposition: form-data; name="image"; filename="animate.gif"
+Content-Type: image/gif
+
+GIF89a
+--realtor-error--
+
+### Error: dos partes image
+POST http://localhost:5023/api/properties
+Content-Type: multipart/form-data; boundary=realtor-error
+
+--realtor-error
+Content-Disposition: form-data; name="title"
+
+Casa con dos imágenes
+--realtor-error
+Content-Disposition: form-data; name="description"
+
+Dos partes image.
+--realtor-error
+Content-Disposition: form-data; name="address"
+
+Calle Central 123
+--realtor-error
+Content-Disposition: form-data; name="price"
+
+250000.00
+--realtor-error
+Content-Disposition: form-data; name="status"
+
+Available
+--realtor-error
+Content-Disposition: form-data; name="bedroomCount"
+
+3
+--realtor-error
+Content-Disposition: form-data; name="bathroomCount"
+
+2
+--realtor-error
+Content-Disposition: form-data; name="areaSquareMeters"
+
+140.50
+--realtor-error
+Content-Disposition: form-data; name="image"; filename="first.png"
+Content-Type: image/png
+
+< ./support/seed-data/images/properties/1.png
+--realtor-error
+Content-Disposition: form-data; name="image"; filename="second.png"
+Content-Type: image/png
+
+< ./support/seed-data/images/properties/2.png
+--realtor-error--

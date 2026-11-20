@@ -1,7 +1,7 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan:
-`specs/004-properties-list-pagination/plan.md`
+`specs/005-properties-create/plan.md`
 <!-- SPECKIT END -->
 
 # Instrucciones globales del proyecto

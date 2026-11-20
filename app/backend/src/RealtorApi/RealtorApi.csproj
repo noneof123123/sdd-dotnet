@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="wwwroot\assets\properties\.gitkeep" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="..\..\..\..\support\seed-data\seed-manifest.json" Link="seed-data\seed-manifest.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="..\..\..\..\support\seed-data\images\properties.json" Link="seed-data\images\properties.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="..\..\..\..\support\seed-data\images\properties-statuses.json" Link="seed-data\images\properties-statuses.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />

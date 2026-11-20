@@ -10,11 +10,15 @@ public sealed record Error(string Code, ErrorType Type, string Title, string Det
 
     public static Error Conflict(string code, string detail) =>
         new(code, ErrorType.Conflict, "Conflicto", detail);
+
+    public static Error Internal() =>
+        new("internal_error", ErrorType.Internal, "Error interno", "No fue posible completar la solicitud.");
 }
 
 public enum ErrorType
 {
     Validation,
     NotFound,
-    Conflict
+    Conflict,
+    Internal
 }

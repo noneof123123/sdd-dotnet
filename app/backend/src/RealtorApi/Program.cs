@@ -4,6 +4,7 @@ using Microsoft.Extensions.FileProviders;
 using RealtorApi.Infrastructure.Endpoints;
 using RealtorApi.Infrastructure.Handlers;
 using RealtorApi.Infrastructure.Persistence;
+using RealtorApi.Infrastructure.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,8 @@ builder.Services.AddOpenApi();
 builder.Services.RegisterSlices(typeof(Program).Assembly);
 builder.Services.RegisterHandlers(typeof(Program).Assembly);
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly, ServiceLifetime.Scoped);
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IPropertyImageStorage, PropertyImageStorage>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options
         .UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
