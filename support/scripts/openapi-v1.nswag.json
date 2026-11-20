@@ -1,0 +1,26 @@
+{
+  "runtime": "Net110",
+  "defaultVariables": null,
+  "documentGenerator": {
+    "fromDocument": {
+      "url": "../../app/backend/src/RealtorApi/wwwroot/openapi/v1.json",
+      "output": null,
+      "newLineBehavior": "Auto"
+    }
+  },
+  "codeGenerators": {
+    "openApiToCSharpClient": {
+      "className": "RealtorApiClient",
+      "namespace": "RealtorApi.OpenApi.SmokeClient",
+      "generateClientClasses": true,
+      "generateClientInterfaces": true,
+      "generateDtoTypes": true,
+      "injectHttpClient": true,
+      "disposeHttpClient": false,
+      "generateExceptionClasses": true,
+      "operationGenerationMode": "SingleClientFromOperationId",
+      "output": "../../artifacts/openapi-client-smoke/RealtorApiClient.cs",
+      "newLineBehavior": "Auto"
+    }
+  }
+}

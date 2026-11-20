@@ -1,16 +1,23 @@
+using System.Reflection;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.OpenApi;
 using RealtorApi.Infrastructure.Endpoints;
 using RealtorApi.Infrastructure.Handlers;
+using RealtorApi.Infrastructure.OpenApi;
 using RealtorApi.Infrastructure.Persistence;
 using RealtorApi.Infrastructure.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(RealtorOpenApiConstants.DocumentName, options =>
+{
+    options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0;
+    options.AddDocumentTransformer<OpenApiDocumentTransformer>();
+    options.AddDocumentTransformer<OpenApiSchemaCatalog>();
+});
 builder.Services.RegisterSlices(typeof(Program).Assembly);
 builder.Services.RegisterHandlers(typeof(Program).Assembly);
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly, ServiceLifetime.Scoped);
@@ -26,11 +33,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 var assetsDirectoryCandidates = new[]
@@ -48,6 +50,13 @@ app.UseStaticFiles(new StaticFileOptions
 });
 app.MapSliceEndpoints();
 
-await app.MigrateAsync();
+var entryAssemblyName = Assembly.GetEntryAssembly()?.GetName().Name;
+var isDocumentGeneration = string.Equals(entryAssemblyName, "GetDocument.Insider", StringComparison.OrdinalIgnoreCase)
+    || string.Equals(entryAssemblyName, "Microsoft.Extensions.ApiDescription.Server", StringComparison.OrdinalIgnoreCase);
+
+if (!isDocumentGeneration)
+{
+    await app.MigrateAsync();
+}
 
 app.Run();

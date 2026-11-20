@@ -1,5 +1,6 @@
 using RealtorApi.Infrastructure.Endpoints;
 using RealtorApi.Infrastructure.Handlers;
+using RealtorApi.Infrastructure.OpenApi;
 
 namespace RealtorApi.Features.Properties.ListProperties;
 
@@ -21,6 +22,10 @@ public sealed class ListPropertiesSlice : ISlice
 
             var result = await handler.HandleAsync(normalizedRequest, httpContext.Request, cancellationToken);
             return Results.Ok(result);
-        });
+        })
+        .WithName(RealtorOpenApiConstants.GetPropertiesOperationId)
+        .WithTags(RealtorOpenApiConstants.PropertiesTag)
+        .Produces<ListPropertiesResponse>(StatusCodes.Status200OK)
+        .ProducesProblem(StatusCodes.Status500InternalServerError);
     }
 }

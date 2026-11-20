@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using RealtorApi.Infrastructure.Endpoints;
+using RealtorApi.Infrastructure.OpenApi;
 using RealtorApi.Infrastructure.Results;
 
 namespace RealtorApi.Features.Properties.CreateProperty;
@@ -19,6 +20,12 @@ public sealed class CreatePropertySlice : ISlice
             return result.IsSuccess && result.Value is not null
                 ? Results.Created($"/api/properties/{result.Value.Id}", result.Value)
                 : ProblemDetailsMapper.ToProblemDetails(result);
-        });
+        })
+        .WithName(RealtorOpenApiConstants.CreatePropertyOperationId)
+        .WithTags(RealtorOpenApiConstants.PropertiesTag)
+        .Accepts<CreatePropertyRequest>("multipart/form-data")
+        .Produces<CreatePropertyResponse>(StatusCodes.Status201Created)
+        .ProducesValidationProblem(StatusCodes.Status400BadRequest)
+        .ProducesProblem(StatusCodes.Status409Conflict);
     }
 }
