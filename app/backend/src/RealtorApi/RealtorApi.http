@@ -258,3 +258,251 @@ Content-Type: image/png
 
 < ./support/seed-data/images/properties/2.png
 --realtor-error--
+
+### Actualizar propiedad sin imagen
+PUT http://localhost:5023/api/properties/3f8b1c2d-4e5a-4b6c-8d9e-0a1b2c3d4e5f
+Content-Type: multipart/form-data; boundary=realtor-update
+
+--realtor-update
+Content-Disposition: form-data; name="title"
+
+Casa actualizada
+--realtor-update
+Content-Disposition: form-data; name="description"
+
+Descripción vigente.
+--realtor-update
+Content-Disposition: form-data; name="address"
+
+Calle Central 123
+--realtor-update
+Content-Disposition: form-data; name="price"
+
+275000.00
+--realtor-update
+Content-Disposition: form-data; name="status"
+
+Maintenance
+--realtor-update
+Content-Disposition: form-data; name="bedroomCount"
+
+3
+--realtor-update
+Content-Disposition: form-data; name="bathroomCount"
+
+2
+--realtor-update
+Content-Disposition: form-data; name="areaSquareMeters"
+
+145.50
+--realtor-update--
+
+### Actualizar propiedad con PNG válido
+PUT http://localhost:5023/api/properties/3f8b1c2d-4e5a-4b6c-8d9e-0a1b2c3d4e5f
+Content-Type: multipart/form-data; boundary=realtor-update
+
+--realtor-update
+Content-Disposition: form-data; name="title"
+
+Casa actualizada con fotografía
+--realtor-update
+Content-Disposition: form-data; name="description"
+
+Propiedad actualizada con PNG válido.
+--realtor-update
+Content-Disposition: form-data; name="address"
+
+Avenida Central 456
+--realtor-update
+Content-Disposition: form-data; name="price"
+
+320000.00
+--realtor-update
+Content-Disposition: form-data; name="status"
+
+Available
+--realtor-update
+Content-Disposition: form-data; name="bedroomCount"
+
+4
+--realtor-update
+Content-Disposition: form-data; name="bathroomCount"
+
+3
+--realtor-update
+Content-Disposition: form-data; name="areaSquareMeters"
+
+180.00
+--realtor-update
+Content-Disposition: form-data; name="image"; filename="property.png"
+Content-Type: image/png
+
+< ./support/seed-data/images/properties/1.png
+--realtor-update--
+
+### Actualizar propiedad con JPG/JPEG válido
+PUT http://localhost:5023/api/properties/3f8b1c2d-4e5a-4b6c-8d9e-0a1b2c3d4e5f
+Content-Type: multipart/form-data; boundary=realtor-update
+
+--realtor-update
+Content-Disposition: form-data; name="title"
+
+Casa actualizada con JPG
+--realtor-update
+Content-Disposition: form-data; name="description"
+
+Propiedad actualizada con JPG/JPEG válido.
+--realtor-update
+Content-Disposition: form-data; name="address"
+
+Calle Secundaria 789
+--realtor-update
+Content-Disposition: form-data; name="price"
+
+275000.00
+--realtor-update
+Content-Disposition: form-data; name="status"
+
+Rented
+--realtor-update
+Content-Disposition: form-data; name="bedroomCount"
+
+2
+--realtor-update
+Content-Disposition: form-data; name="bathroomCount"
+
+1
+--realtor-update
+Content-Disposition: form-data; name="areaSquareMeters"
+
+95.00
+--realtor-update
+Content-Disposition: form-data; name="image"; filename="property.jpg"
+Content-Type: image/jpeg
+
+< ./ruta/local/propiedad.jpg
+--realtor-update--
+
+### Error: propiedad inexistente al actualizar
+PUT http://localhost:5023/api/properties/00000000-0000-0000-0000-000000000000
+Content-Type: multipart/form-data; boundary=realtor-update
+
+--realtor-update
+Content-Disposition: form-data; name="title"
+
+Casa inexistente
+--realtor-update
+Content-Disposition: form-data; name="description"
+
+Identificador válido sin propiedad asociada.
+--realtor-update
+Content-Disposition: form-data; name="address"
+
+Calle Central 123
+--realtor-update
+Content-Disposition: form-data; name="price"
+
+250000.00
+--realtor-update
+Content-Disposition: form-data; name="status"
+
+Available
+--realtor-update
+Content-Disposition: form-data; name="bedroomCount"
+
+3
+--realtor-update
+Content-Disposition: form-data; name="bathroomCount"
+
+2
+--realtor-update
+Content-Disposition: form-data; name="areaSquareMeters"
+
+140.50
+--realtor-update--
+
+### Error: datos inválidos al actualizar
+PUT http://localhost:5023/api/properties/3f8b1c2d-4e5a-4b6c-8d9e-0a1b2c3d4e5f
+Content-Type: multipart/form-data; boundary=realtor-update
+
+--realtor-update
+Content-Disposition: form-data; name="title"
+
+Casa inválida
+--realtor-update
+Content-Disposition: form-data; name="description"
+
+Estado no permitido.
+--realtor-update
+Content-Disposition: form-data; name="address"
+
+Calle Central 123
+--realtor-update
+Content-Disposition: form-data; name="price"
+
+250000.00
+--realtor-update
+Content-Disposition: form-data; name="status"
+
+Unknown
+--realtor-update
+Content-Disposition: form-data; name="bedroomCount"
+
+3
+--realtor-update
+Content-Disposition: form-data; name="bathroomCount"
+
+2
+--realtor-update
+Content-Disposition: form-data; name="areaSquareMeters"
+
+140.50
+--realtor-update--
+
+### Error: dos partes image al actualizar
+PUT http://localhost:5023/api/properties/3f8b1c2d-4e5a-4b6c-8d9e-0a1b2c3d4e5f
+Content-Type: multipart/form-data; boundary=realtor-update
+
+--realtor-update
+Content-Disposition: form-data; name="title"
+
+Casa con dos imágenes
+--realtor-update
+Content-Disposition: form-data; name="description"
+
+Dos partes image.
+--realtor-update
+Content-Disposition: form-data; name="address"
+
+Calle Central 123
+--realtor-update
+Content-Disposition: form-data; name="price"
+
+250000.00
+--realtor-update
+Content-Disposition: form-data; name="status"
+
+Available
+--realtor-update
+Content-Disposition: form-data; name="bedroomCount"
+
+3
+--realtor-update
+Content-Disposition: form-data; name="bathroomCount"
+
+2
+--realtor-update
+Content-Disposition: form-data; name="areaSquareMeters"
+
+140.50
+--realtor-update
+Content-Disposition: form-data; name="image"; filename="first.png"
+Content-Type: image/png
+
+< ./support/seed-data/images/properties/1.png
+--realtor-update
+Content-Disposition: form-data; name="image"; filename="second.png"
+Content-Type: image/png
+
+< ./support/seed-data/images/properties/2.png
+--realtor-update--

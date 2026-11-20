@@ -1,0 +1,37 @@
+using Microsoft.AspNetCore.Mvc;
+using RealtorApi.Domain.Properties;
+
+namespace RealtorApi.Features.Properties.UpdateProperty;
+
+public sealed record UpdatePropertyRequest
+{
+    [FromRoute(Name = "id")]
+    public Guid Id { get; init; }
+
+    [FromForm(Name = "title")]
+    public string Title { get; init; } = string.Empty;
+
+    [FromForm(Name = "description")]
+    public string Description { get; init; } = string.Empty;
+
+    [FromForm(Name = "address")]
+    public string Address { get; init; } = string.Empty;
+
+    [FromForm(Name = "price")]
+    public decimal Price { get; init; }
+
+    [FromForm(Name = "status")]
+    public PropertyStatus Status { get; init; }
+
+    [FromForm(Name = "bedroomCount")]
+    public int BedroomCount { get; init; }
+
+    [FromForm(Name = "bathroomCount")]
+    public int BathroomCount { get; init; }
+
+    [FromForm(Name = "areaSquareMeters")]
+    public decimal AreaSquareMeters { get; init; }
+
+    [FromForm(Name = "image")]
+    public IFormFile? Image { get; init; }
+}
