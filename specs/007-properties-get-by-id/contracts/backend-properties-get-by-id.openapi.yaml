@@ -1,0 +1,154 @@
+openapi: 3.0.3
+info:
+  title: API del catálogo inmobiliario - consulta de propiedad por identificador
+  version: 1.0.0
+  description: Contrato de la operación unitaria de consulta de propiedades.
+paths:
+  /api/properties/{id}:
+    get:
+      operationId: getPropertyById
+      summary: Obtiene una propiedad por su identificador
+      description: Devuelve la representación pública de una única propiedad existente.
+      tags:
+        - Properties
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador único de la propiedad.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Propiedad encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPropertyByIdResponse'
+              examples:
+                conImagen:
+                  value:
+                    id: 3f8b1c2d-4e5a-4b6c-8d9e-0a1b2c3d4e5f
+                    title: Casa con fotografía
+                    description: Propiedad publicada con PNG válido.
+                    address: Avenida Central 456
+                    price: 320000.00
+                    status: Available
+                    bedroomCount: 4
+                    bathroomCount: 3
+                    areaSquareMeters: 180.00
+                    imageUrl: http://localhost:5023/assets/properties/9f2c4a1b8d3e4f5a6b7c8d9e0f1a2b3c.png
+                    createdAt: '2026-11-20T10:00:00Z'
+                    updatedAt: null
+                sinImagen:
+                  value:
+                    id: 2a7c4d1e-9b3f-4a82-8c17-6d5e4f3a2b19
+                    title: Casa sin fotografía
+                    description: Propiedad publicada sin imagen.
+                    address: Calle Central 123
+                    price: 250000.00
+                    status: Rented
+                    bedroomCount: 3
+                    bathroomCount: 2
+                    areaSquareMeters: 140.50
+                    imageUrl: ''
+                    createdAt: '2026-11-20T09:30:00Z'
+                    updatedAt: '2026-11-20T11:45:00Z'
+        '400':
+          description: Identificador mal formado o vacío.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+        '404':
+          description: No existe una propiedad con el identificador solicitado.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Error interno con mensaje genérico.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+components:
+  schemas:
+    GetPropertyByIdResponse:
+      type: object
+      required:
+        - id
+        - title
+        - description
+        - address
+        - price
+        - status
+        - bedroomCount
+        - bathroomCount
+        - areaSquareMeters
+        - imageUrl
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        address:
+          type: string
+        price:
+          type: number
+          format: double
+        status:
+          type: string
+          enum:
+            - Available
+            - Rented
+            - Maintenance
+        bedroomCount:
+          type: integer
+          format: int32
+        bathroomCount:
+          type: integer
+          format: int32
+        areaSquareMeters:
+          type: number
+          format: double
+        imageUrl:
+          type: string
+          description: URL absoluta pública o cadena vacía cuando no existe imagen válida.
+        createdAt:
+          type: string
+          format: date-time
+          description: Fecha de creación en UTC.
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: Última modificación en UTC, o null si nunca se actualizó.
+    ProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: integer
+          format: int32
+        detail:
+          type: string
+    ValidationProblemDetails:
+      allOf:
+        - $ref: '#/components/schemas/ProblemDetails'
+        - type: object
+          properties:
+            errors:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  type: string

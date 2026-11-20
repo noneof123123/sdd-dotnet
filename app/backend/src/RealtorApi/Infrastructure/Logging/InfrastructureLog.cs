@@ -9,4 +9,7 @@ public static partial class InfrastructureLog
 
     [LoggerMessage(EventId = 1002, Level = LogLevel.Warning, Message = "Operación rechazada: {Operation}")]
     public static partial void OperationRejected(ILogger logger, string operation);
+
+    [LoggerMessage(EventId = 1003, Level = LogLevel.Information, Message = "Propiedad consultada: {PropertyId}")]
+    public static partial void PropertyQueried(ILogger logger, Guid propertyId);
 }
