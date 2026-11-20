@@ -1,0 +1,9 @@
+<span class="status-badge">
+    <LucideIcon Name="circle-check" ClassName="icon icon-sm" aria-hidden="true" />
+    @Label
+</span>
+
+@code {
+    [Parameter, EditorRequired]
+    public string Label { get; set; } = string.Empty;
+}

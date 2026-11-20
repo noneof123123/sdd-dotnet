@@ -1,0 +1,43 @@
+@using PropertyState = RealtorWeb.Features.Properties.PresentationState
+
+<div class="state-panel @CssClass" role="@PanelRole">
+    <LucideIcon Name="@IconName" ClassName="icon icon-lg" aria-hidden="true" />
+    <p class="state-panel__message">@Message</p>
+
+    @if (State != PropertyState.Cargando && !string.IsNullOrWhiteSpace(RetryUrl))
+    {
+        <a class="button-link button-link--secondary" href="@RetryUrl">@ActionLabel</a>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public PropertyState State { get; set; }
+
+    [Parameter, EditorRequired]
+    public string Message { get; set; } = string.Empty;
+
+    [Parameter]
+    public string? RetryUrl { get; set; }
+
+    private string CssClass => State == PropertyState.Error ? "state-panel--error" : string.Empty;
+
+    private string PanelRole => State == PropertyState.Error ? "alert" : "status";
+
+    private string IconName => State switch
+    {
+        PropertyState.Cargando => "loader-circle",
+        PropertyState.Vacio => "inbox",
+        PropertyState.Error => "circle-alert",
+        PropertyState.NoEncontrado => "search",
+        _ => "info"
+    };
+
+    private string ActionLabel => State switch
+    {
+        PropertyState.Error => "Reintentar",
+        PropertyState.Vacio => "Volver al catálogo",
+        PropertyState.NoEncontrado => "Volver al catálogo",
+        _ => string.Empty
+    };
+}

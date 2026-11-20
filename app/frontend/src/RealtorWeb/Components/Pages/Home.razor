@@ -1,7 +1,71 @@
 ﻿@page "/"
+@attribute [StreamRendering]
+@using PropertyState = RealtorWeb.Features.Properties.PresentationState
+@inject IPropertyCatalogService CatalogService
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Catálogo de propiedades</PageTitle>
 
-<h1>Hello, world!</h1>
+<section class="catalog-section" aria-labelledby="catalogo-titulo">
+    <header class="section-header">
+        <p class="eyebrow">Realtor</p>
+        <h1 id="catalogo-titulo">Catálogo de propiedades</h1>
+        <p class="section-subtitle">Descubre inmuebles disponibles para tu próximo hogar.</p>
+    </header>
 
-Welcome to your new app.
+    @if (Model.State == PropertyState.Contenido)
+    {
+        <p class="catalog-summary" role="status">@Model.SummaryText</p>
+
+        <div class="property-grid">
+            @foreach (var item in Model.Items)
+            {
+                <PropertyCard Property="@item" />
+            }
+        </div>
+
+        <nav class="pagination" aria-label="Paginación del catálogo">
+            @if (Model.PreviousUrl is not null)
+            {
+                <a class="button-link button-link--secondary" href="@Model.PreviousUrl">Anterior</a>
+            }
+
+            <span class="pagination__label" aria-current="page">@Model.SummaryText</span>
+
+            @if (Model.NextUrl is not null)
+            {
+                <a class="button-link" href="@Model.NextUrl">Siguiente</a>
+            }
+        </nav>
+    }
+    else
+    {
+        <PresentationState State="@Model.State" Message="@Model.Message" RetryUrl="@Model.RetryUrl" />
+    }
+</section>
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "page")]
+    public string? Page { get; set; }
+
+    private PropertyCatalogViewModel Model { get; set; } = new(
+        Array.Empty<PropertyCardViewModel>(),
+        1,
+        CatalogNavigation.PageSize,
+        0,
+        0,
+        false,
+        false,
+        null,
+        null,
+        string.Empty,
+        PropertyState.Cargando,
+        PropertyPresentation.LoadingCatalogMessage,
+        null);
+
+    protected override async Task OnInitializedAsync()
+    {
+        var page = CatalogNavigation.SanitizePage(Page);
+        Model = await CatalogService.GetCatalogAsync(page, CancellationToken.None);
+    }
+}

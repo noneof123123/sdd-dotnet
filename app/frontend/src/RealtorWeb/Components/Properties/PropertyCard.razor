@@ -1,0 +1,47 @@
+<article class="property-card" data-property-id="@Property.Id">
+    <div class="property-card__media">
+        @if (string.IsNullOrWhiteSpace(Property.ImageUrl))
+        {
+            <div class="image-placeholder" role="img" aria-label="@Property.ImageAlt">
+                <LucideIcon Name="image" ClassName="icon icon-lg" aria-hidden="true" />
+                <span>@Property.ImageAlt</span>
+            </div>
+        }
+        else
+        {
+            <img src="@Property.ImageUrl" alt="@Property.ImageAlt" loading="lazy" />
+        }
+    </div>
+
+    <div class="property-card__body">
+        <PropertyStatusBadge Label="@Property.StatusLabel" />
+
+        <h3>
+            <a class="property-card__link" href="@Property.DetailsUrl">@Property.Title</a>
+        </h3>
+
+        <p class="property-card__price">@Property.Price</p>
+        <p class="property-card__summary">@Property.Summary</p>
+        <p class="property-card__address">@Property.Address</p>
+
+        <ul class="property-meta">
+            <li class="meta-item">
+                <LucideIcon Name="bed-double" ClassName="icon icon-sm" aria-hidden="true" />
+                <span>@Property.BedroomCount dormitorios</span>
+            </li>
+            <li class="meta-item">
+                <LucideIcon Name="bath" ClassName="icon icon-sm" aria-hidden="true" />
+                <span>@Property.BathroomCount baños</span>
+            </li>
+            <li class="meta-item">
+                <LucideIcon Name="ruler" ClassName="icon icon-sm" aria-hidden="true" />
+                <span>@Property.AreaSquareMeters m²</span>
+            </li>
+        </ul>
+    </div>
+</article>
+
+@code {
+    [Parameter, EditorRequired]
+    public PropertyCardViewModel Property { get; set; } = default!;
+}

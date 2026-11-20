@@ -1,0 +1,110 @@
+@page "/properties/{id:guid}"
+@attribute [StreamRendering]
+@using PropertyState = RealtorWeb.Features.Properties.PresentationState
+@inject IPropertyCatalogService CatalogService
+
+<PageTitle>Detalle de la propiedad</PageTitle>
+
+<section class="details-section" aria-labelledby="detalle-titulo">
+    <a class="back-link" href="@Model.BackUrl">
+        <LucideIcon Name="arrow-left" ClassName="icon icon-sm" aria-hidden="true" />
+        Volver al catálogo
+    </a>
+
+    @if (Model.State == PropertyState.Contenido)
+    {
+        <header class="details-header">
+            <div>
+                <p class="eyebrow">Ficha de la propiedad</p>
+                <h1 id="detalle-titulo">@Model.Title</h1>
+                <p class="details-address">@Model.Address</p>
+                <PropertyStatusBadge Label="@Model.StatusLabel" />
+            </div>
+            <p class="details-price">@Model.Price</p>
+        </header>
+
+        <div class="details-layout">
+            <div class="details-media">
+                @if (string.IsNullOrWhiteSpace(Model.ImageUrl))
+                {
+                    <div class="image-placeholder" role="img" aria-label="@Model.ImageAlt">
+                        <LucideIcon Name="image" ClassName="icon icon-xl" aria-hidden="true" />
+                        <span>@Model.ImageAlt</span>
+                    </div>
+                }
+                else
+                {
+                    <img src="@Model.ImageUrl" alt="@Model.ImageAlt" loading="lazy" />
+                }
+            </div>
+
+            <div class="details-body">
+                <p class="details-description">@Model.Description</p>
+
+                <dl class="details-facts">
+                    <div>
+                        <dt>Dormitorios</dt>
+                        <dd>@Model.BedroomCount dormitorios</dd>
+                    </div>
+                    <div>
+                        <dt>Baños</dt>
+                        <dd>@Model.BathroomCount baños</dd>
+                    </div>
+                    <div>
+                        <dt>Superficie</dt>
+                        <dd>@Model.AreaSquareMeters m²</dd>
+                    </div>
+                </dl>
+
+                <dl class="details-dates">
+                    <div>
+                        <dt>Creación</dt>
+                        <dd>@Model.CreatedAt</dd>
+                    </div>
+                    <div>
+                        <dt>Última actualización</dt>
+                        <dd>@Model.UpdatedAt</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+    }
+    else
+    {
+        <PresentationState State="@Model.State" Message="@Model.Message" RetryUrl="@Model.RetryUrl" />
+    }
+</section>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "page")]
+    public string? Page { get; set; }
+
+    private PropertyDetailsViewModel Model { get; set; } = new(
+        Guid.Empty,
+        string.Empty,
+        string.Empty,
+        string.Empty,
+        string.Empty,
+        string.Empty,
+        0,
+        0,
+        0,
+        null,
+        string.Empty,
+        string.Empty,
+        string.Empty,
+        "/?page=1",
+        PropertyState.Cargando,
+        PropertyPresentation.LoadingDetailsMessage,
+        null);
+
+    protected override async Task OnInitializedAsync()
+    {
+        var page = CatalogNavigation.SanitizePage(Page);
+        Model = await CatalogService.GetDetailsAsync(Id, page, CancellationToken.None);
+    }
+}
