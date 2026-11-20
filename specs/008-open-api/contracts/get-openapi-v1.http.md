@@ -33,7 +33,7 @@ El cuerpo es el contenido íntegro de `app/backend/src/RealtorApi/wwwroot/openap
 **Garantías del cuerpo:**
 - Es un documento OpenAPI 3.0 válido.
 - `info.version` es `v1`.
-- `paths` contiene exactamente las cinco operaciones funcionales documentadas.
+- `paths` contiene exactamente las seis operaciones funcionales documentadas en cuatro rutas.
 - `paths` no contiene `/openapi/v1.json`.
 - Las plantillas de ruta usan `{id}`, no `{id:guid}`.
 - `components.schemas` contiene `PropertyStatus`, `ProblemDetails` y `HttpValidationProblemDetails` referenciados mediante `$ref`.
@@ -59,13 +59,13 @@ La spec no impone directivas de caché. Si se añaden en el futuro, deben permit
 curl -fsS -H 'Accept: application/json' http://localhost:5023/openapi/v1.json | jq -r '.openapi, .info.version, (.paths | keys | length)'
 ```
 
-Salida esperada: versión `3.0.x`, versión de información `v1` y `5` paths.
+Salida esperada: versión `3.0.x`, versión de información `v1` y `4` paths.
 
 ## Exclusión
 
 Esta operación queda fuera de:
 - `paths` del documento generado.
 - La comparación de deriva entre documento y `EndpointDataSource`.
-- El conjunto de cinco endpoints cubiertos por FR-006.
+- El conjunto de seis endpoints cubiertos por FR-006, incluida `ChangePropertyStatus` de `specs/009-update-status/spec.md`.
 
 Motivo: aclaración A aceptada durante `/speckit.clarify`.

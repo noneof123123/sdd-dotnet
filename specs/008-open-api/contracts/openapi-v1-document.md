@@ -27,8 +27,11 @@ Definir la forma observable del documento generado. El documento es un derivado 
 | `GetPropertyById` | `GET` | `/api/properties/{id}` | `Propiedades` | — | — | 200 | 404 |
 | `CreateProperty` | `POST` | `/api/properties` | `Propiedades` | — | requerido | 201 | 400, 409 |
 | `UpdateProperty` | `PUT` | `/api/properties/{id}` | `Propiedades` | — | requerido | 200 | 400, 404, 409 |
+| `ChangePropertyStatus` | `PATCH` | `/api/properties/{id}/status` | `Propiedades` | — | requerido (`application/json`) | 200 | 400, 404, 500 |
 
 **Reglas:**
+
+- El inventario actual contiene seis operaciones en cuatro rutas.
 - El orden de paths y operaciones no es semántico.
 - No se permite ninguna operación adicional en `paths`.
 - La ruta `/openapi/v1.json` no debe aparecer en `paths`.
@@ -60,6 +63,7 @@ Definir la forma observable del documento generado. El documento es un derivado 
 ## Entradas
 
 - `POST /api/properties` y `PUT /api/properties/{id}` declaran `requestBody` con `multipart/form-data`, coherente con los `[FromForm]` y `IFormFile` reales de los slices.
+- `PATCH /api/properties/{id}/status` declara `requestBody` con `application/json` y el esquema `ChangePropertyStatusBody`; el parámetro `id` se declara como parámetro de ruta.
 - El esquema de entrada debe corresponder al tipo real aceptado por cada slice.
 - `required` debe reflejar las reglas de validación aplicadas por FluentValidation; no debe endurecerse ni relajarse respecto a runtime.
 

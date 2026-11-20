@@ -16,8 +16,8 @@ public sealed class OpenApiDocumentTests
         Assert.Equal("v1", root.GetProperty("info").GetProperty("version").GetString());
 
         var paths = root.GetProperty("paths");
-        Assert.Equal(3, paths.EnumerateObject().Count());
-        Assert.Equal(5, paths.EnumerateObject().Sum(path => path.Value.EnumerateObject().Count()));
+        Assert.Equal(4, paths.EnumerateObject().Count());
+        Assert.Equal(6, paths.EnumerateObject().Sum(path => path.Value.EnumerateObject().Count()));
         Assert.False(paths.TryGetProperty("/openapi/v1.json", out _));
         Assert.DoesNotContain(":guid", json);
 
@@ -26,6 +26,7 @@ public sealed class OpenApiDocumentTests
         AssertOperation(paths, "/api/properties/{id}", "get", "GetPropertyById", "Propiedades");
         AssertOperation(paths, "/api/properties", "post", "CreateProperty", "Propiedades");
         AssertOperation(paths, "/api/properties/{id}", "put", "UpdateProperty", "Propiedades");
+        AssertOperation(paths, "/api/properties/{id}/status", "patch", "ChangePropertyStatus", "Propiedades");
 
         var listOperation = paths.GetProperty("/api/properties").GetProperty("get");
         var queryNames = listOperation.GetProperty("parameters").EnumerateArray()
@@ -38,6 +39,15 @@ public sealed class OpenApiDocumentTests
         var healthOperation = paths.GetProperty("/health").GetProperty("get");
         AssertErrorRef(healthOperation, "500", "#/components/schemas/ProblemDetails");
 
+        var changeStatusOperation = paths.GetProperty("/api/properties/{id}/status").GetProperty("patch");
+        var pathParameter = Assert.Single(changeStatusOperation.GetProperty("parameters").EnumerateArray());
+        Assert.Equal("id", pathParameter.GetProperty("name").GetString());
+        Assert.Equal("path", pathParameter.GetProperty("in").GetString());
+        Assert.True(pathParameter.GetProperty("required").GetBoolean());
+        Assert.Equal(
+            "#/components/schemas/ChangePropertyStatusBody",
+            changeStatusOperation.GetProperty("requestBody").GetProperty("content").GetProperty("application/json").GetProperty("schema").GetProperty("$ref").GetString());
+
         var schemas = root.GetProperty("components").GetProperty("schemas");
         Assert.True(schemas.TryGetProperty("PropertyStatus", out _));
         Assert.True(schemas.TryGetProperty("ProblemDetails", out _));
@@ -48,6 +58,7 @@ public sealed class OpenApiDocumentTests
         AssertStatusRef(schemas, "GetPropertyByIdResponse");
         AssertStatusRef(schemas, "CreatePropertyResponse");
         AssertStatusRef(schemas, "UpdatePropertyResponse");
+        AssertStatusRef(schemas, "ChangePropertyStatusResponse");
 
         AssertErrorRef(paths.GetProperty("/api/properties").GetProperty("get"), "500", "#/components/schemas/ProblemDetails");
         AssertErrorRef(paths.GetProperty("/api/properties/{id}").GetProperty("get"), "404", "#/components/schemas/ProblemDetails");
@@ -56,6 +67,9 @@ public sealed class OpenApiDocumentTests
         AssertErrorRef(paths.GetProperty("/api/properties/{id}").GetProperty("put"), "400", "#/components/schemas/HttpValidationProblemDetails");
         AssertErrorRef(paths.GetProperty("/api/properties/{id}").GetProperty("put"), "404", "#/components/schemas/ProblemDetails");
         AssertErrorRef(paths.GetProperty("/api/properties/{id}").GetProperty("put"), "409", "#/components/schemas/ProblemDetails");
+        AssertErrorRef(changeStatusOperation, "400", "#/components/schemas/HttpValidationProblemDetails");
+        AssertErrorRef(changeStatusOperation, "404", "#/components/schemas/ProblemDetails");
+        AssertErrorRef(changeStatusOperation, "500", "#/components/schemas/ProblemDetails");
     }
 
     private static void AssertOperation(

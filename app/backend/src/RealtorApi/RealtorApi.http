@@ -522,3 +522,55 @@ Accept: application/json
 ### Error: identificador mal formado al consultar
 GET http://localhost:5023/api/properties/no-es-un-guid
 Accept: application/json
+
+### Cambiar estado de propiedad
+PATCH http://localhost:5023/api/properties/3f8b1c2d-4e5a-4b6c-8d9e-0a1b2c3d4e5f/status
+Content-Type: application/json
+Accept: application/json
+
+{
+  "status": "Rented"
+}
+
+### Repetir estado vigente de propiedad
+PATCH http://localhost:5023/api/properties/3f8b1c2d-4e5a-4b6c-8d9e-0a1b2c3d4e5f/status
+Content-Type: application/json
+Accept: application/json
+
+{
+  "status": "Rented"
+}
+
+### Error: identificador mal formado al cambiar estado
+PATCH http://localhost:5023/api/properties/no-es-un-guid/status
+Content-Type: application/json
+Accept: application/json
+
+{
+  "status": "Rented"
+}
+
+### Error: estado ausente al cambiar estado
+PATCH http://localhost:5023/api/properties/3f8b1c2d-4e5a-4b6c-8d9e-0a1b2c3d4e5f/status
+Content-Type: application/json
+Accept: application/json
+
+{}
+
+### Error: estado inválido al cambiar estado
+PATCH http://localhost:5023/api/properties/3f8b1c2d-4e5a-4b6c-8d9e-0a1b2c3d4e5f/status
+Content-Type: application/json
+Accept: application/json
+
+{
+  "status": "rented"
+}
+
+### Error: propiedad inexistente al cambiar estado
+PATCH http://localhost:5023/api/properties/00000000-0000-0000-0000-000000000000/status
+Content-Type: application/json
+Accept: application/json
+
+{
+  "status": "Maintenance"
+}

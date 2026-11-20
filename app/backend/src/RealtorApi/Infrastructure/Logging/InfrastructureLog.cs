@@ -12,4 +12,7 @@ public static partial class InfrastructureLog
 
     [LoggerMessage(EventId = 1003, Level = LogLevel.Information, Message = "Propiedad consultada: {PropertyId}")]
     public static partial void PropertyQueried(ILogger logger, Guid propertyId);
+
+    [LoggerMessage(EventId = 1004, Level = LogLevel.Information, Message = "Estado de propiedad cambiado: {PropertyId} -> {Status}")]
+    public static partial void PropertyStatusChanged(ILogger logger, Guid propertyId, string status);
 }

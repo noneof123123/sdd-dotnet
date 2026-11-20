@@ -37,6 +37,9 @@ public sealed class OpenApiToolingTests
             "openapi-client-smoke",
             "RealtorApiClient.cs");
         Assert.True(File.Exists(generatedClient));
+
+        var generatedClientSource = await File.ReadAllTextAsync(generatedClient);
+        Assert.Contains("ChangePropertyStatusAsync", generatedClientSource);
     }
 
     private static void AssertToolSuccess(string toolName, ToolResult result)

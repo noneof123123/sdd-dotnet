@@ -13,6 +13,7 @@ public static class RealtorOpenApiConstants
     public const string GetPropertyByIdOperationId = "GetPropertyById";
     public const string CreatePropertyOperationId = "CreateProperty";
     public const string UpdatePropertyOperationId = "UpdateProperty";
+    public const string ChangePropertyStatusOperationId = "ChangePropertyStatus";
     public const string PropertyStatusSchema = "PropertyStatus";
     public const string ProblemDetailsSchema = "ProblemDetails";
     public const string ValidationProblemDetailsSchema = "HttpValidationProblemDetails";

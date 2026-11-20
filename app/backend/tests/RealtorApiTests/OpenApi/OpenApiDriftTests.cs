@@ -12,6 +12,15 @@ public sealed class OpenApiDriftTests
     }
 
     [Fact]
+    public void ChangeStatusEndpoint_IsPresentInBothInventories()
+    {
+        var expected = new EndpointIdentity("PATCH", "/api/properties/{id}/status");
+
+        Assert.Contains(expected, OpenApiEndpointInventory.FromRuntime());
+        Assert.Contains(expected, OpenApiEndpointInventory.FromGeneratedDocument());
+    }
+
+    [Fact]
     public void NewEndpoint_IsDetected()
     {
         var runtime = OpenApiEndpointInventory.FromRuntime();
