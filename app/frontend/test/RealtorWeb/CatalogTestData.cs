@@ -25,20 +25,32 @@ public static class CatalogTestData
             CatalogNavigation.DetailsUrl(id ?? Guid.Parse("11111111-1111-1111-1111-111111111111"), page));
 
     public static PropertyCatalogViewModel Catalog(params PropertyCardViewModel[] items) =>
+        CatalogWith(page: 2, totalItems: items.Length * 2, totalPages: 3, items: items);
+
+    public static PropertyCatalogViewModel CatalogWith(
+        int page = 2,
+        int totalItems = 2,
+        int totalPages = 3,
+        bool hasPrevious = true,
+        bool hasNext = true,
+        PresentationState state = PresentationState.Contenido,
+        string? message = null,
+        string? retryUrl = null,
+        params PropertyCardViewModel[] items) =>
         new(
             items,
-            2,
+            page,
             CatalogNavigation.PageSize,
-            items.Length * 2,
-            3,
-            true,
-            true,
-            "/?page=1",
-            "/?page=3",
-            "Página 2 de 3",
-            PresentationState.Contenido,
-            string.Empty,
-            null);
+            totalItems,
+            totalPages,
+            hasNext,
+            hasPrevious,
+            CatalogNavigation.PreviousUrl(page, hasPrevious),
+            CatalogNavigation.NextUrl(page, hasNext),
+            $"Página {page} de {totalPages}",
+            state,
+            message ?? PropertyPresentation.MessageFor(state),
+            retryUrl);
 
     public static PropertyDetailsViewModel Details(
         Guid? id = null,

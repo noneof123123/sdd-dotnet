@@ -14,7 +14,7 @@
 
     @if (Model.State == PropertyState.Contenido)
     {
-        <p class="catalog-summary" role="status">@Model.SummaryText</p>
+        <p class="catalog-summary" role="status">@Model.SummaryText · @Model.TotalItemsText</p>
 
         <div class="property-grid">
             @foreach (var item in Model.Items)
@@ -23,17 +23,25 @@
             }
         </div>
 
-        <nav class="pagination" aria-label="Paginación del catálogo">
-            @if (Model.PreviousUrl is not null)
+        <nav class="pagination" aria-label="@PropertyPresentation.PaginationNavLabel">
+            @if (Model.HasPrevious && Model.PreviousUrl is { Length: > 0 } previousUrl)
             {
-                <a class="button-link button-link--secondary" href="@Model.PreviousUrl">Anterior</a>
+                <a class="button-link button-link--secondary" href="@previousUrl">@PropertyPresentation.PreviousControlText</a>
+            }
+            else
+            {
+                <span class="button-link button-link--secondary button-link--disabled" role="link" aria-disabled="true" aria-label="@PropertyPresentation.PreviousDisabledLabel">@PropertyPresentation.PreviousControlText</span>
             }
 
             <span class="pagination__label" aria-current="page">@Model.SummaryText</span>
 
-            @if (Model.NextUrl is not null)
+            @if (Model.HasNext && Model.NextUrl is { Length: > 0 } nextUrl)
             {
-                <a class="button-link" href="@Model.NextUrl">Siguiente</a>
+                <a class="button-link" href="@nextUrl">@PropertyPresentation.NextControlText</a>
+            }
+            else
+            {
+                <span class="button-link button-link--disabled" role="link" aria-disabled="true" aria-label="@PropertyPresentation.NextDisabledLabel">@PropertyPresentation.NextControlText</span>
             }
         </nav>
     }

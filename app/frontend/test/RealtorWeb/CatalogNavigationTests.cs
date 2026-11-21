@@ -1,3 +1,7 @@
+using Bunit;
+using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
+using RealtorWeb.Components.Pages;
 using RealtorWeb.Features.Properties;
 
 namespace RealtorWebTests;
@@ -56,5 +60,46 @@ public class CatalogNavigationTests
             "/properties/11111111-1111-1111-1111-111111111111?page=2",
             CatalogNavigation.RetryDetailsUrl(Guid.Parse("11111111-1111-1111-1111-111111111111"), 2));
         Assert.Equal("/?page=2", CatalogNavigation.BackUrl(2));
+    }
+
+    [Fact]
+    public void EffectivePageSummaryOverridesOverflowRequest()
+    {
+        using var context = new BunitContext();
+        var requestedPage = 0;
+        var service = new EffectivePageCatalogService(page =>
+        {
+            requestedPage = page;
+            return CatalogTestData.CatalogWith(
+                page: 3,
+                totalItems: 36,
+                totalPages: 3,
+                hasPrevious: true,
+                hasNext: false);
+        });
+        context.Services.AddSingleton<IPropertyCatalogService>(service);
+
+        var navigation = context.Services.GetRequiredService<NavigationManager>();
+        navigation.NavigateTo(navigation.GetUriWithQueryParameter("page", "999999"));
+
+        var cut = context.Render<Home>();
+
+        cut.WaitForAssertion(() => Assert.Equal(999999, requestedPage));
+        Assert.Contains("Página 3 de 3", cut.Markup);
+        Assert.Contains("36 propiedades", cut.Markup);
+        Assert.DoesNotContain("No encontramos esta propiedad", cut.Markup);
+    }
+
+    private sealed class EffectivePageCatalogService(Func<int, PropertyCatalogViewModel> catalogFactory)
+        : IPropertyCatalogService
+    {
+        public Task<PropertyCatalogViewModel> GetCatalogAsync(int page, CancellationToken cancellationToken) =>
+            Task.FromResult(catalogFactory(page));
+
+        public Task<PropertyDetailsViewModel> GetDetailsAsync(
+            Guid id,
+            int page,
+            CancellationToken cancellationToken) =>
+            throw new NotSupportedException();
     }
 }

@@ -315,6 +315,14 @@ h3 {
     color: var(--color-primary-dark);
 }
 
+.button-link--disabled,
+.button-link--disabled:hover {
+    background: var(--color-placeholder);
+    border-color: var(--color-border);
+    color: var(--color-muted);
+    cursor: not-allowed;
+}
+
 .state-panel {
     align-items: center;
     background: var(--color-surface);

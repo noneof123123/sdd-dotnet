@@ -39,6 +39,7 @@ public class PropertyCardTests
     }
 
     [Theory]
+    [InlineData(PropertyStatus.Available, "Disponible")]
     [InlineData(PropertyStatus.Rented, "Alquilada")]
     [InlineData(PropertyStatus.Maintenance, "Mantenimiento")]
     [InlineData("Otro", "Estado no disponible")]

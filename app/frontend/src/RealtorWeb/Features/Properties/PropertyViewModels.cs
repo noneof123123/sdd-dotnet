@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace RealtorWeb.Features.Properties;
 
 public enum PresentationState
@@ -36,7 +38,14 @@ public sealed record PropertyCatalogViewModel(
     string SummaryText,
     PresentationState State,
     string Message,
-    string? RetryUrl);
+    string? RetryUrl)
+{
+    public string TotalItemsText => TotalItems == 1
+        ? "1 propiedad"
+        : $"{TotalItems.ToString("N0", CatalogCulture)} propiedades";
+
+    private static readonly CultureInfo CatalogCulture = CultureInfo.GetCultureInfo("es-ES");
+}
 
 public sealed record PropertyDetailsViewModel(
     Guid Id,

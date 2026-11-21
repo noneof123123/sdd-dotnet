@@ -7,6 +7,11 @@ public static class PropertyPresentation
     public const string NotFoundMessage = "No encontramos esta propiedad.";
     public const string LoadingCatalogMessage = "Cargando propiedades…";
     public const string LoadingDetailsMessage = "Cargando propiedad…";
+    public const string PaginationNavLabel = "Paginación del catálogo";
+    public const string PreviousControlText = "Anterior";
+    public const string NextControlText = "Siguiente";
+    public const string PreviousDisabledLabel = "Página anterior no disponible";
+    public const string NextDisabledLabel = "Página siguiente no disponible";
 
     public static PresentationState CatalogState(bool isLoading, bool succeeded, bool hasItems)
     {

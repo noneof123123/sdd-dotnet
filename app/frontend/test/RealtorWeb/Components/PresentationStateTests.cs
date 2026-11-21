@@ -1,5 +1,7 @@
 using Bunit;
+using Microsoft.Extensions.DependencyInjection;
 using PropertyState = RealtorWeb.Features.Properties.PresentationState;
+using RealtorWeb.Components.Pages;
 using RealtorWeb.Features.Properties;
 using PresentationStateComponent = RealtorWeb.Components.Properties.PresentationState;
 
@@ -72,5 +74,31 @@ public class PresentationStateTests
         });
 
         Assert.DoesNotContain("href=", cut.Markup);
+    }
+
+    [Fact]
+    public void CatalogDoesNotRenderNotFoundState()
+    {
+        using var context = new BunitContext();
+        context.Services.AddSingleton<IPropertyCatalogService>(
+            new FixedCatalogService(CatalogTestData.Catalog()));
+
+        var cut = context.Render<Home>();
+
+        cut.WaitForAssertion(() => Assert.Contains("Página 2 de 3", cut.Markup));
+        Assert.DoesNotContain(PropertyPresentation.NotFoundMessage, cut.Markup);
+        Assert.DoesNotContain("Volver al catálogo", cut.Markup);
+    }
+
+    private sealed class FixedCatalogService(PropertyCatalogViewModel catalog) : IPropertyCatalogService
+    {
+        public Task<PropertyCatalogViewModel> GetCatalogAsync(int page, CancellationToken cancellationToken) =>
+            Task.FromResult(catalog);
+
+        public Task<PropertyDetailsViewModel> GetDetailsAsync(
+            Guid id,
+            int page,
+            CancellationToken cancellationToken) =>
+            throw new NotSupportedException();
     }
 }
