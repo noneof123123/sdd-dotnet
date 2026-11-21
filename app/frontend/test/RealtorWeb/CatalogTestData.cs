@@ -59,11 +59,13 @@ public static class CatalogTestData
         string? imageUrl = "/images/piso.jpg",
         int page = 2,
         PresentationState state = PresentationState.Contenido,
-        string? retryUrl = null) =>
+        string? retryUrl = null,
+        string description = "Descripción completa del inmueble.",
+        string updatedAt = "20/05/2026 12:45") =>
         new(
             id ?? Guid.Parse("11111111-1111-1111-1111-111111111111"),
             title,
-            "Descripción completa del inmueble.",
+            description,
             "Calle Mayor 1, Madrid",
             "1.250,00",
             PropertyStatusLabels.Resolve(status),
@@ -73,7 +75,7 @@ public static class CatalogTestData
             imageUrl,
             imageUrl is null ? $"Imagen no disponible para {title}" : $"Imagen de {title}",
             "14/05/2026 10:30",
-            "20/05/2026 12:45",
+            updatedAt,
             CatalogNavigation.BackUrl(page),
             state,
             PropertyPresentation.MessageFor(state, true),

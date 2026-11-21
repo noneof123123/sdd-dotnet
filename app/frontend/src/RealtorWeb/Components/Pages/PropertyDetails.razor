@@ -11,12 +11,13 @@
         Volver al catálogo
     </a>
 
+    <h1 id="detalle-titulo" class="@HeadingCssClass">@Heading</h1>
+
     @if (Model.State == PropertyState.Contenido)
     {
         <header class="details-header">
             <div>
                 <p class="eyebrow">Ficha de la propiedad</p>
-                <h1 id="detalle-titulo">@Model.Title</h1>
                 <p class="details-address">@Model.Address</p>
                 <PropertyStatusBadge Label="@Model.StatusLabel" />
             </div>
@@ -101,6 +102,14 @@
         PropertyState.Cargando,
         PropertyPresentation.LoadingDetailsMessage,
         null);
+
+    private string Heading => Model.State == PropertyState.Contenido
+        ? Model.Title
+        : "Detalle de la propiedad";
+
+    private string HeadingCssClass => Model.State == PropertyState.Contenido
+        ? string.Empty
+        : "sr-only";
 
     protected override async Task OnInitializedAsync()
     {

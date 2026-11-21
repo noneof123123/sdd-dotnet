@@ -78,4 +78,68 @@ public class PropertyDetailsTests
         Assert.Contains("href=\"/?page=3\"", cut.Markup);
         Assert.DoesNotContain("Piso luminoso", cut.Markup);
     }
+
+    [Fact]
+    public void RenderDirectRouteShowsSameInformationAndFirstPageBackLink()
+    {
+        using var context = new BunitContext();
+        var id = Guid.Parse("11111111-1111-1111-1111-111111111111");
+        var service = new StubCatalogService
+        {
+            DetailsHandler = (requestedId, page, _) =>
+                Task.FromResult(CatalogTestData.Details(id: requestedId, page: page))
+        };
+        context.Services.AddSingleton<IPropertyCatalogService>(service);
+
+        var cut = context.Render<PropertyDetails>(parameters => parameters.Add(item => item.Id, id));
+
+        cut.WaitForAssertion(() => Assert.Contains("Piso luminoso", cut.Markup));
+        Assert.Contains("Descripción completa del inmueble.", cut.Markup);
+        Assert.Contains("Calle Mayor 1, Madrid", cut.Markup);
+        Assert.Contains("1.250,00", cut.Markup);
+        Assert.Contains("3 dormitorios", cut.Markup);
+        Assert.Contains("2 baños", cut.Markup);
+        Assert.Contains("95 m²", cut.Markup);
+        Assert.Contains("14/05/2026 10:30", cut.Markup);
+        Assert.Contains("href=\"/?page=1\"", cut.Markup);
+    }
+
+    [Fact]
+    public void RenderMissingUpdatedDateShowsAvailabilityText()
+    {
+        using var context = new BunitContext();
+        var id = Guid.Parse("11111111-1111-1111-1111-111111111111");
+        var service = new StubCatalogService
+        {
+            DetailsHandler = (requestedId, page, _) =>
+                Task.FromResult(CatalogTestData.Details(
+                    id: requestedId,
+                    page: page,
+                    updatedAt: "No disponible"))
+        };
+        context.Services.AddSingleton<IPropertyCatalogService>(service);
+
+        var cut = context.Render<PropertyDetails>(parameters => parameters.Add(item => item.Id, id));
+
+        cut.WaitForAssertion(() => Assert.Contains("No disponible", cut.Markup));
+        Assert.Contains("Última actualización", cut.Markup);
+    }
+
+    [Fact]
+    public void RenderUnknownStatusShowsFallbackLabel()
+    {
+        using var context = new BunitContext();
+        var id = Guid.Parse("11111111-1111-1111-1111-111111111111");
+        var service = new StubCatalogService
+        {
+            DetailsHandler = (requestedId, page, _) =>
+                Task.FromResult(CatalogTestData.Details(id: requestedId, page: page, status: "desconocido"))
+        };
+        context.Services.AddSingleton<IPropertyCatalogService>(service);
+
+        var cut = context.Render<PropertyDetails>(parameters => parameters.Add(item => item.Id, id));
+
+        cut.WaitForAssertion(() => Assert.Contains("Estado no disponible", cut.Markup));
+        Assert.Contains("Piso luminoso", cut.Markup);
+    }
 }
