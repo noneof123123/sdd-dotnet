@@ -2,6 +2,7 @@ using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using RealtorWeb.Components.Pages;
+using RealtorWeb.Features.Interactions;
 using RealtorWeb.Features.Properties;
 
 namespace RealtorWebTests;
@@ -66,6 +67,7 @@ public class CatalogNavigationTests
     public void EffectivePageSummaryOverridesOverflowRequest()
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
         var requestedPage = 0;
         var service = new EffectivePageCatalogService(page =>
         {

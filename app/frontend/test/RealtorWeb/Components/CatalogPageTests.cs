@@ -2,6 +2,7 @@ using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using RealtorWeb.Components.Pages;
+using RealtorWeb.Features.Interactions;
 using RealtorWeb.Features.Properties;
 
 namespace RealtorWebTests.Components;
@@ -12,6 +13,7 @@ public class CatalogPageTests
     public void RenderShowsCatalogCardsPaginationAndPreservedPage()
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
         var card = CatalogTestData.Card(page: 2);
         var service = new StubCatalogService
         {
@@ -37,6 +39,7 @@ public class CatalogPageTests
     public void RenderSanitizesInvalidPageBeforeConsultingService()
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
         var consultedPage = 0;
         var service = new StubCatalogService
         {
@@ -60,6 +63,7 @@ public class CatalogPageTests
     public void RenderShowsTotalAndAccessiblePagination()
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
         var service = new StubCatalogService
         {
             CatalogHandler = (_, _) => Task.FromResult(CatalogTestData.CatalogWith(
@@ -82,6 +86,7 @@ public class CatalogPageTests
     public void RenderShowsDisabledControlsWhenNoAdjacentPages()
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
         var service = new StubCatalogService
         {
             CatalogHandler = (_, _) => Task.FromResult(CatalogTestData.CatalogWith(
@@ -107,6 +112,7 @@ public class CatalogPageTests
     public void RenderUsesEffectivePageFromService()
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
         var consultedPage = 0;
         var service = new StubCatalogService
         {
@@ -140,6 +146,7 @@ public class CatalogPageTests
     public void RenderEmptyStateHidesPagination()
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
         var service = new StubCatalogService
         {
             CatalogHandler = (_, _) => Task.FromResult(CatalogTestData.CatalogWith(
@@ -159,6 +166,7 @@ public class CatalogPageTests
     public void RenderErrorStateShowsRetryAndHidesPagination()
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
         var service = new StubCatalogService
         {
             CatalogHandler = (_, _) => Task.FromResult(CatalogTestData.CatalogWith(
@@ -173,7 +181,7 @@ public class CatalogPageTests
 
         cut.WaitForAssertion(() => Assert.Contains(PropertyPresentation.ErrorMessage, cut.Markup));
         Assert.Contains("Reintentar", cut.Markup);
-        Assert.Contains("href=\"/?page=2\"", cut.Markup);
+        Assert.Contains("<button type=\"button\"", cut.Markup);
         Assert.DoesNotContain("class=\"pagination\"", cut.Markup);
     }
 }

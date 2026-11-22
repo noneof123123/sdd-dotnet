@@ -553,3 +553,130 @@ h3 {
         min-height: 14rem;
     }
 }
+
+#components-reconnect-modal {
+    background: transparent;
+    border: 0;
+    border-radius: var(--radius-lg);
+    color: var(--color-text);
+    inset: 0;
+    margin: auto;
+    max-height: calc(100% - var(--space-4));
+    max-width: calc(100% - var(--space-4));
+    overflow: auto;
+    padding: 0;
+    width: min(32rem, 100%);
+}
+
+#components-reconnect-modal::backdrop {
+    background: rgb(23 33 28 / 65%);
+}
+
+#components-reconnect-modal:not(.components-reconnect-show):not(.components-reconnect-retrying):not(.components-reconnect-failed):not(.components-reconnect-rejected) {
+    display: none;
+}
+
+#components-reconnect-modal button {
+    min-height: 2.75rem;
+}
+
+.reconnect-panel {
+    display: none;
+}
+
+#components-reconnect-modal.components-reconnect-show .components-reconnect-show,
+#components-reconnect-modal.components-reconnect-retrying .components-reconnect-show,
+#components-reconnect-modal.components-reconnect-failed .components-reconnect-failed,
+#components-reconnect-modal.components-reconnect-rejected .components-reconnect-rejected {
+    display: block;
+}
+
+.reconnect-panel__contenido {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    display: grid;
+    gap: var(--space-3);
+    justify-items: center;
+    padding: var(--space-5) var(--space-4);
+    text-align: center;
+}
+
+.reconnect-panel__contenido h2 {
+    margin: 0;
+}
+
+.reconnect-panel__contenido p {
+    color: var(--color-muted);
+    margin: 0;
+}
+
+.reconnect-progreso {
+    background: var(--color-placeholder);
+    border-radius: var(--radius-sm);
+    height: 0.35rem;
+    overflow: hidden;
+    width: min(16rem, 100%);
+}
+
+.reconnect-progreso span {
+    animation: reconnect-progreso 1.2s ease-in-out infinite;
+    background: var(--color-primary);
+    display: block;
+    height: 100%;
+    width: 40%;
+}
+
+.reconnect-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    justify-content: center;
+}
+
+.state-panel--recuperando {
+    border-color: var(--color-primary);
+}
+
+.state-panel[role="status"] .icon {
+    animation: interaction-giro 1.6s linear infinite;
+    color: var(--color-primary);
+}
+
+.state-panel--error .icon {
+    color: var(--color-error);
+}
+
+@keyframes interaction-giro {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes reconnect-progreso {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(250%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reconnect-progreso span,
+    .state-panel[role="status"] .icon {
+        animation: none;
+    }
+
+    .reconnect-progreso span {
+        width: 100%;
+    }
+}
+
+@media (min-width: 48rem) {
+    #components-reconnect-modal {
+        width: min(30rem, calc(100% - var(--space-5)));
+    }
+}

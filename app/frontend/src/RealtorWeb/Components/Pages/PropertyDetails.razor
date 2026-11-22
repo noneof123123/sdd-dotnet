@@ -1,7 +1,8 @@
 @page "/properties/{id:guid}"
-@attribute [StreamRendering]
+@rendermode InteractiveServer
 @using PropertyState = RealtorWeb.Features.Properties.PresentationState
 @inject IPropertyCatalogService CatalogService
+@inject InteractionContext Interaction
 
 <PageTitle>Detalle de la propiedad</PageTitle>
 
@@ -72,7 +73,7 @@
     }
     else
     {
-        <PresentationState State="@Model.State" Message="@Model.Message" RetryUrl="@Model.RetryUrl" />
+        <PresentationState State="@Model.State" Message="@Model.Message" RetryUrl="@Model.RetryUrl" OnRetry="ReintentarAsync" />
     }
 </section>
 
@@ -84,8 +85,89 @@
     [SupplyParameterFromQuery(Name = "page")]
     public string? Page { get; set; }
 
-    private PropertyDetailsViewModel Model { get; set; } = new(
-        Guid.Empty,
+    private PropertyDetailsViewModel Model { get; set; } = LoadingModel(Guid.Empty, 1);
+
+    private string _claveCargada = string.Empty;
+
+    private int _intencion;
+
+    private string Heading => Model.State == PropertyState.Contenido
+        ? Model.Title
+        : "Detalle de la propiedad";
+
+    private string HeadingCssClass => Model.State == PropertyState.Contenido
+        ? string.Empty
+        : "sr-only";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var pagina = CatalogNavigation.SanitizePage(Page);
+        var clave = Clave(Id, pagina);
+        if (string.Equals(_claveCargada, clave, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        await CargarAsync(pagina, clave);
+    }
+
+    private async Task ReintentarAsync()
+    {
+        _claveCargada = string.Empty;
+        await CargarAsync(CatalogNavigation.SanitizePage(Page));
+    }
+
+    private async Task CargarAsync(int pagina, string? clave = null)
+    {
+        var intencion = ++_intencion;
+        _claveCargada = clave ?? Clave(Id, pagina);
+        Interaction.RegistrarDetalle(Id, pagina, CatalogNavigation.BackUrl(pagina));
+        Interaction.ComenzarEspera();
+        Model = LoadingModel(Id, pagina);
+        StateHasChanged();
+
+        try
+        {
+            var resultado = await CatalogService.GetDetailsAsync(Id, pagina, CancellationToken.None);
+            if (intencion != _intencion)
+            {
+                return;
+            }
+
+            Model = resultado;
+            if (resultado.State == PropertyState.Error)
+            {
+                Interaction.CompletarNoDisponible();
+            }
+            else
+            {
+                Interaction.CompletarCorrecto(Interaction.UltimoResultado == InteractionOutcome.Lento);
+            }
+        }
+        catch (Exception)
+        {
+            if (intencion != _intencion)
+            {
+                return;
+            }
+
+            Model = ErrorModel(Id, pagina);
+            Interaction.CompletarNoDisponible();
+        }
+        finally
+        {
+            if (intencion == _intencion)
+            {
+                StateHasChanged();
+            }
+        }
+    }
+
+    private static string Clave(Guid id, int pagina) =>
+        $"{id.ToString("D", System.Globalization.CultureInfo.InvariantCulture)}|{pagina.ToString(System.Globalization.CultureInfo.InvariantCulture)}";
+
+    private static PropertyDetailsViewModel LoadingModel(Guid id, int pagina) => new(
+        id,
         string.Empty,
         string.Empty,
         string.Empty,
@@ -98,22 +180,27 @@
         string.Empty,
         string.Empty,
         string.Empty,
-        "/?page=1",
+        CatalogNavigation.BackUrl(pagina),
         PropertyState.Cargando,
-        PropertyPresentation.LoadingDetailsMessage,
+        InteractionMessages.EsperandoDetalle,
         null);
 
-    private string Heading => Model.State == PropertyState.Contenido
-        ? Model.Title
-        : "Detalle de la propiedad";
-
-    private string HeadingCssClass => Model.State == PropertyState.Contenido
-        ? string.Empty
-        : "sr-only";
-
-    protected override async Task OnInitializedAsync()
-    {
-        var page = CatalogNavigation.SanitizePage(Page);
-        Model = await CatalogService.GetDetailsAsync(Id, page, CancellationToken.None);
-    }
+    private static PropertyDetailsViewModel ErrorModel(Guid id, int pagina) => new(
+        id,
+        string.Empty,
+        string.Empty,
+        string.Empty,
+        string.Empty,
+        string.Empty,
+        0,
+        0,
+        0,
+        null,
+        string.Empty,
+        string.Empty,
+        string.Empty,
+        CatalogNavigation.BackUrl(pagina),
+        PropertyState.Error,
+        PropertyPresentation.MessageFor(PropertyState.Error, true),
+        CatalogNavigation.RetryDetailsUrl(id, pagina));
 }

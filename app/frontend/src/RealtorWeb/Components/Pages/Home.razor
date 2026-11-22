@@ -1,7 +1,8 @@
 ﻿@page "/"
-@attribute [StreamRendering]
+@rendermode InteractiveServer
 @using PropertyState = RealtorWeb.Features.Properties.PresentationState
 @inject IPropertyCatalogService CatalogService
+@inject InteractionContext Interaction
 
 <PageTitle>Catálogo de propiedades</PageTitle>
 
@@ -47,7 +48,7 @@
     }
     else
     {
-        <PresentationState State="@Model.State" Message="@Model.Message" RetryUrl="@Model.RetryUrl" />
+        <PresentationState State="@Model.State" Message="@Model.Message" RetryUrl="@Model.RetryUrl" OnRetry="ReintentarAsync" />
     }
 </section>
 
@@ -56,24 +57,106 @@
     [SupplyParameterFromQuery(Name = "page")]
     public string? Page { get; set; }
 
-    private PropertyCatalogViewModel Model { get; set; } = new(
+    private PropertyCatalogViewModel Model { get; set; } = LoadingModel(1);
+
+    private string _claveCargada = string.Empty;
+
+    private int _intencion;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var pagina = CatalogNavigation.SanitizePage(Page);
+        var clave = Clave(pagina);
+        if (string.Equals(_claveCargada, clave, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        await CargarAsync(pagina, clave);
+    }
+
+    private async Task ReintentarAsync()
+    {
+        _claveCargada = string.Empty;
+        await CargarAsync(CatalogNavigation.SanitizePage(Page));
+    }
+
+    private async Task CargarAsync(int pagina, string? clave = null)
+    {
+        var intencion = ++_intencion;
+        _claveCargada = clave ?? Clave(pagina);
+        Interaction.RegistrarCatalogo(Page, CatalogNavigation.CatalogUrl(pagina));
+        Interaction.ComenzarEspera();
+        Model = LoadingModel(pagina);
+        StateHasChanged();
+
+        try
+        {
+            var resultado = await CatalogService.GetCatalogAsync(pagina, CancellationToken.None);
+            if (intencion != _intencion)
+            {
+                return;
+            }
+
+            Model = resultado;
+            if (resultado.State == PropertyState.Error)
+            {
+                Interaction.CompletarNoDisponible();
+            }
+            else
+            {
+                Interaction.CompletarCorrecto(Interaction.UltimoResultado == InteractionOutcome.Lento);
+            }
+        }
+        catch (Exception)
+        {
+            if (intencion != _intencion)
+            {
+                return;
+            }
+
+            Model = ErrorModel(pagina);
+            Interaction.CompletarNoDisponible();
+        }
+        finally
+        {
+            if (intencion == _intencion)
+            {
+                StateHasChanged();
+            }
+        }
+    }
+
+    private static string Clave(int pagina) =>
+        pagina.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+    private static PropertyCatalogViewModel LoadingModel(int pagina) => new(
         Array.Empty<PropertyCardViewModel>(),
-        1,
+        pagina,
         CatalogNavigation.PageSize,
         0,
-        0,
+        1,
         false,
         false,
         null,
         null,
         string.Empty,
         PropertyState.Cargando,
-        PropertyPresentation.LoadingCatalogMessage,
+        InteractionMessages.EsperandoCatalogo,
         null);
 
-    protected override async Task OnInitializedAsync()
-    {
-        var page = CatalogNavigation.SanitizePage(Page);
-        Model = await CatalogService.GetCatalogAsync(page, CancellationToken.None);
-    }
+    private static PropertyCatalogViewModel ErrorModel(int pagina) => new(
+        Array.Empty<PropertyCardViewModel>(),
+        pagina,
+        CatalogNavigation.PageSize,
+        0,
+        1,
+        false,
+        false,
+        null,
+        null,
+        string.Empty,
+        PropertyState.Error,
+        PropertyPresentation.MessageFor(PropertyState.Error),
+        CatalogNavigation.RetryCatalogUrl(pagina));
 }

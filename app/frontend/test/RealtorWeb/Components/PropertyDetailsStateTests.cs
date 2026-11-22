@@ -2,6 +2,7 @@ using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using RealtorWeb.Components.Pages;
+using RealtorWeb.Features.Interactions;
 using RealtorWeb.Features.Properties;
 
 namespace RealtorWebTests.Components;
@@ -12,6 +13,7 @@ public class PropertyDetailsStateTests
     public void RenderShowsLoadingBeforeServiceCompletes()
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
         var id = Guid.Parse("11111111-1111-1111-1111-111111111111");
         var completion = new TaskCompletionSource<PropertyDetailsViewModel>(TaskCreationOptions.RunContinuationsAsynchronously);
         var service = new StubCatalogService
@@ -33,6 +35,7 @@ public class PropertyDetailsStateTests
     public void RenderNotFoundDoesNotShowPartialPropertyData()
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
         var id = Guid.Parse("22222222-2222-2222-2222-222222222222");
         var service = new StubCatalogService
         {
@@ -57,6 +60,7 @@ public class PropertyDetailsStateTests
     public void RenderErrorShowsRetryForSameDetail()
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
         var id = Guid.Parse("11111111-1111-1111-1111-111111111111");
         var service = new StubCatalogService
         {
@@ -75,9 +79,7 @@ public class PropertyDetailsStateTests
 
         cut.WaitForAssertion(() => Assert.Contains(PropertyPresentation.ErrorMessage, cut.Markup));
         Assert.Contains("Reintentar", cut.Markup);
-        Assert.Contains(
-            "href=\"/properties/11111111-1111-1111-1111-111111111111?page=2\"",
-            cut.Markup);
+        Assert.Contains("<button type=\"button\"", cut.Markup);
         Assert.DoesNotContain("Piso luminoso", cut.Markup);
     }
 }

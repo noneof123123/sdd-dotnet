@@ -4,7 +4,11 @@
     <LucideIcon Name="@IconName" ClassName="icon icon-lg" aria-hidden="true" />
     <p class="state-panel__message">@Message</p>
 
-    @if (State != PropertyState.Cargando && !string.IsNullOrWhiteSpace(RetryUrl))
+    @if (State == PropertyState.Error && OnRetry.HasDelegate)
+    {
+        <button type="button" class="button-link button-link--secondary" @onclick="OnRetry">@ActionLabel</button>
+    }
+    else if (State != PropertyState.Cargando && !string.IsNullOrWhiteSpace(RetryUrl))
     {
         <a class="button-link button-link--secondary" href="@RetryUrl">@ActionLabel</a>
     }
@@ -19,6 +23,9 @@
 
     [Parameter]
     public string? RetryUrl { get; set; }
+
+    [Parameter]
+    public EventCallback OnRetry { get; set; }
 
     private string CssClass => State == PropertyState.Error ? "state-panel--error" : string.Empty;
 

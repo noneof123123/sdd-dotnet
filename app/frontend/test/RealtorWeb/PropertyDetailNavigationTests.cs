@@ -2,6 +2,7 @@ using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using RealtorWeb.Components.Pages;
+using RealtorWeb.Features.Interactions;
 using RealtorWeb.Features.Properties;
 
 namespace RealtorWebTests;
@@ -17,6 +18,7 @@ public class PropertyDetailNavigationTests
     public void DetailPassesSanitizedPageAndPreservesOverflowContext(string? page, int expectedPage, string expectedBackUrl)
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
         var id = Guid.Parse("11111111-1111-1111-1111-111111111111");
         var capturedPage = 0;
         var service = new StubCatalogService

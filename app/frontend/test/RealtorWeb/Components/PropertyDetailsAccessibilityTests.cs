@@ -1,6 +1,7 @@
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using RealtorWeb.Components.Pages;
+using RealtorWeb.Features.Interactions;
 using RealtorWeb.Features.Properties;
 
 namespace RealtorWebTests.Components;
@@ -11,6 +12,7 @@ public class PropertyDetailsAccessibilityTests
     public void RenderContentHasAccessibleHeadingSectionAndImageAlternative()
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
         var id = Guid.Parse("11111111-1111-1111-1111-111111111111");
         context.Services.AddSingleton<IPropertyCatalogService>(new StubCatalogService
         {
@@ -34,6 +36,7 @@ public class PropertyDetailsAccessibilityTests
     public void RenderNonContentStatesKeepAccessibleHeading(PresentationState state)
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
         var id = Guid.Parse("11111111-1111-1111-1111-111111111111");
         context.Services.AddSingleton<IPropertyCatalogService>(new StubCatalogService
         {

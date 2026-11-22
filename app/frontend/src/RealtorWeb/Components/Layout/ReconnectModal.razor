@@ -1,0 +1,34 @@
+<script type="module" src="@Assets["Components/Layout/ReconnectModal.razor.js"]"></script>
+
+<dialog id="components-reconnect-modal" class="reconnect-modal" aria-labelledby="reconnect-titulo" aria-describedby="reconnect-mensaje">
+    <div class="components-reconnect-show reconnect-panel" role="alertdialog" aria-labelledby="reconnect-titulo" aria-describedby="reconnect-mensaje">
+        <div class="reconnect-panel__contenido">
+            <h2 id="reconnect-titulo">Reconectando…</h2>
+            <p id="reconnect-mensaje">Estamos intentando restablecer la conexión.</p>
+            <div class="reconnect-progreso" aria-hidden="true">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="components-reconnect-failed reconnect-panel" role="alertdialog" aria-labelledby="reconnect-fallido-titulo" aria-describedby="reconnect-fallido-mensaje">
+        <div class="reconnect-panel__contenido">
+            <h2 id="reconnect-fallido-titulo">No se pudo mantener la conexión.</h2>
+            <p id="reconnect-fallido-mensaje">Puedes volver a intentarlo o recargar la página.</p>
+            <div class="reconnect-acciones">
+                <button type="button" class="button-link" data-reconnect-action="retry">Reintentar</button>
+                <button type="button" class="button-link button-link--secondary" data-reconnect-action="reload">Recargar página</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="components-reconnect-rejected reconnect-panel" role="alertdialog" aria-labelledby="reconnect-rechazado-titulo" aria-describedby="reconnect-rechazado-mensaje">
+        <div class="reconnect-panel__contenido">
+            <h2 id="reconnect-rechazado-titulo">No se pudo mantener la conexión.</h2>
+            <p id="reconnect-rechazado-mensaje">La conexión no se pudo restablecer. Puedes recargar la página para continuar.</p>
+            <div class="reconnect-acciones">
+                <button type="button" class="button-link" data-reconnect-action="reload">Recargar página</button>
+            </div>
+        </div>
+    </div>
+</dialog>

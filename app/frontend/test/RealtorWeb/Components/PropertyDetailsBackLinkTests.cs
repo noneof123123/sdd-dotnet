@@ -2,6 +2,7 @@ using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using RealtorWeb.Components.Pages;
+using RealtorWeb.Features.Interactions;
 using RealtorWeb.Features.Properties;
 
 namespace RealtorWebTests.Components;
@@ -16,6 +17,7 @@ public class PropertyDetailsBackLinkTests
     public void RenderBackLinkUsesSanitizedContext(string page, string expectedHref)
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
         var id = Guid.Parse("11111111-1111-1111-1111-111111111111");
         var service = new StubCatalogService
         {

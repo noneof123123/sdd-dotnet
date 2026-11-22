@@ -2,6 +2,7 @@ using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using PropertyState = RealtorWeb.Features.Properties.PresentationState;
 using RealtorWeb.Components.Pages;
+using RealtorWeb.Features.Interactions;
 using RealtorWeb.Features.Properties;
 using PresentationStateComponent = RealtorWeb.Components.Properties.PresentationState;
 
@@ -17,6 +18,7 @@ public class PresentationStateTests
     public void RenderShowsMessageAndAccessibleRole(PropertyState state, string message, string expectedRole)
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
 
         var cut = context.Render<PresentationStateComponent>(parameters =>
         {
@@ -33,6 +35,7 @@ public class PresentationStateTests
     public void RenderErrorShowsRetryAction()
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
 
         var cut = context.Render<PresentationStateComponent>(parameters =>
         {
@@ -49,6 +52,7 @@ public class PresentationStateTests
     public void RenderNotFoundShowsBackAction()
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
 
         var cut = context.Render<PresentationStateComponent>(parameters =>
         {
@@ -65,6 +69,7 @@ public class PresentationStateTests
     public void RenderLoadingDoesNotShowAction()
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
 
         var cut = context.Render<PresentationStateComponent>(parameters =>
         {
@@ -80,6 +85,7 @@ public class PresentationStateTests
     public void CatalogDoesNotRenderNotFoundState()
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
         context.Services.AddSingleton<IPropertyCatalogService>(
             new FixedCatalogService(CatalogTestData.Catalog()));
 

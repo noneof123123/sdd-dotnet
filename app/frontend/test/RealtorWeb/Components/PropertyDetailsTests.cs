@@ -2,6 +2,7 @@ using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using RealtorWeb.Components.Pages;
+using RealtorWeb.Features.Interactions;
 using RealtorWeb.Features.Properties;
 
 namespace RealtorWebTests.Components;
@@ -12,6 +13,7 @@ public class PropertyDetailsTests
     public void RenderShowsFullDetailsAndBackLinkToOriginPage()
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
         var id = Guid.Parse("11111111-1111-1111-1111-111111111111");
         var service = new StubCatalogService
         {
@@ -43,6 +45,7 @@ public class PropertyDetailsTests
     public void RenderWithoutImageShowsAccessiblePlaceholder()
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
         var id = Guid.Parse("11111111-1111-1111-1111-111111111111");
         var service = new StubCatalogService
         {
@@ -62,6 +65,7 @@ public class PropertyDetailsTests
     public void RenderMissingPropertyShowsNotFoundMessageAndBackLink()
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
         var id = Guid.Parse("22222222-2222-2222-2222-222222222222");
         var service = new StubCatalogService
         {
@@ -83,6 +87,7 @@ public class PropertyDetailsTests
     public void RenderDirectRouteShowsSameInformationAndFirstPageBackLink()
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
         var id = Guid.Parse("11111111-1111-1111-1111-111111111111");
         var service = new StubCatalogService
         {
@@ -108,6 +113,7 @@ public class PropertyDetailsTests
     public void RenderMissingUpdatedDateShowsAvailabilityText()
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
         var id = Guid.Parse("11111111-1111-1111-1111-111111111111");
         var service = new StubCatalogService
         {
@@ -129,6 +135,7 @@ public class PropertyDetailsTests
     public void RenderUnknownStatusShowsFallbackLabel()
     {
         using var context = new BunitContext();
+        context.Services.AddSingleton(new InteractionContext());
         var id = Guid.Parse("11111111-1111-1111-1111-111111111111");
         var service = new StubCatalogService
         {
