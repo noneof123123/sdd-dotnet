@@ -1,17 +1,26 @@
 <!--
 Informe de impacto de sincronización
-- Cambio de versión: 1.0.0 → 1.1.0 (MINOR; se añade gobierno operativo del ciclo de estados).
-- Principios modificados: II. Spec-Driven Development (No Negociable) — se precisa la
-  aprobación de revisión y su transición de estado.
-- Secciones añadidas: Ciclo de estado de specs.
+- Cambio de versión: 1.1.0 → 1.2.0 (MINOR; se añade un principio, una regla de cierre
+  retrospectiva y expansión material del método de trabajo).
+- Principios modificados: II. Spec-Driven Development (No Negociable) — se añade nota
+  aclaratoria para iniciativas retrospectivas; VIII. Ingeniería Inversa y Documentación
+  Retrospectiva — principio nuevo.
+- Secciones añadidas: regla de cierre para iniciativas retrospectivas dentro de
+  «Ciclo de estado de specs»; artefactos operativos adicionales dentro de
+  «Método de Trabajo».
 - Secciones eliminadas: ninguna.
-- Plantillas y flujos: ✅ spec-template.md; ✅ speckit.analyze.agent.md;
-  ✅ speckit.implement.agent.md; ✅ plan-template.md y tasks-template.md revisados, sin
-  cambios necesarios. La carpeta .specify/templates/commands/ y .specify/extensions.yml
-  no existen; no se configuran hooks.
-- Pendientes: ninguno.
+- Plantillas y flujos: ✅ spec-template.md actualizado, sin cambios necesarios: `Input`
+  y `Success Criteria` permiten declarar el carácter retrospectivo y criterios observables;
+  ✅ plan-template.md actualizado, sin cambios necesarios: la estructura de documentación
+  ya incluye `research.md`, `data-model.md`, `quickstart.md` y `contracts/`;
+  ⚠️ tasks-template.md pendiente: debe distinguir explícitamente tareas de documentación
+  o análisis frente a ejecución de verificación build/test para iniciativas retrospectivas.
+  La carpeta `.specify/templates/commands/` y `.specify/extensions.yml` no existen;
+  no se configuran hooks.
+- Pendientes: actualizar manualmente tasks-template.md sin modificarlo en esta enmienda.
+  Los corchetes del protocolo de preguntas son marcadores operativos deliberados,
+  no placeholders pendientes.
 -->
-
 
 # Constitución del Proyecto Realtor
 
@@ -37,8 +46,9 @@ speckit.specify -> speckit.clarify -> speckit.plan -> speckit.analyze -> speckit
 
 Ninguna fase obligatoria puede saltarse.
 
-La aprobación de una revisión de spec DEBE reflejarse mediante la transición automática
-de estado definida en «Ciclo de estado de specs»; no se permite editar el estado manualmente.
+Para iniciativas retrospectivas, el flujo specify -> plan -> tasks -> implement se conserva, pero la fase de implementación consiste en producir y validar documentación, no en modificar código de aplicación.
+
+La aprobación de una revisión de spec DEBE reflejarse mediante la transición automática de estado definida en «Ciclo de estado de specs»; no se permite editar el estado manualmente.
 
 ### III. Arquitectura Canónica de Backend y Frontend
 El backend DEBE organizarse por features y casos de uso con Vertical Slice Architecture.
@@ -86,6 +96,19 @@ Si existe divergencia entre convenciones locales y comportamiento operativo upst
 
 Toda divergencia se resuelve por enmienda explícita de esta constitución, no por edición silenciosa de scripts ni por reubicación unilateral de archivos.
 
+### VIII. Ingeniería Inversa y Documentación Retrospectiva
+Una iniciativa puede tener como entregable principal el análisis o la documentación de un cambio ya presente en el repositorio en lugar de implementar funcionalidad nueva.
+
+Toda iniciativa retrospectiva DEBE declararse explícitamente como retrospectiva en el Input o en el Resumen del spec.
+
+Está prohibido introducir comportamiento nuevo o modificar código de aplicación bajo pretexto de documentar.
+
+Las conclusiones DEBEN basarse en evidencia verificable: diff de Git, compilación, pruebas automatizadas y validación manual cuando aplique.
+
+El spec.md DEBE incluir criterios de aceptación observables y el quickstart.md DEBE registrar la evidencia obtenida.
+
+Las tareas DEBEN distinguir entre documentación o análisis y ejecución de verificación de build o tests.
+
 ---
 
 ## Estructura del Repositorio
@@ -104,11 +127,21 @@ La carpeta .specify se reserva para infraestructura operativa de spec-kit.
 
 ## Método de Trabajo
 
-Cada iniciativa DEBE contener mínimo tres archivos:
+Cada iniciativa DEBE contener, como mínimos obligatorios, estos tres artefactos:
 
 - spec.md
 - plan.md
 - tasks.md
+
+El flujo Speckit DEBE permitir artefactos operativos adicionales cuando aporten trazabilidad o evidencia:
+
+- research.md
+- data-model.md
+- quickstart.md
+- contracts/
+- checklists/
+
+Los artefactos operativos adicionales NO DEBEN sustituir a los tres artefactos obligatorios.
 
 Antes de implementar:
 
@@ -142,10 +175,15 @@ Una spec solo puede pasar a **Implementada** cuando se cumplen simultáneamente 
 condiciones:
 
 - Todas las tareas de `tasks.md` están marcadas como completadas (`[X]` o `[x]`); no queda
-	ninguna tarea `- [ ]`.
+	 ninguna tarea `- [ ]`.
 - `quickstart.md` contiene evidencia trazable de validación ejecutada con éxito, incluidos
-	la fecha, los comandos o pasos ejecutados y sus resultados.
+	 la fecha, los comandos o pasos ejecutados y sus resultados.
 - La verificación final de la implementación no reporta fallos bloqueantes.
+
+Para iniciativas retrospectivas o de ingeniería inversa, una spec DEBE poder marcarse como
+**Implementada** cuando su entregable documental esté completo y `quickstart.md` registre
+la evidencia ejecutada de build, test y/o validación manual, aunque no exista cambio de
+código de aplicación. Esta regla NO exime el cumplimiento de las condiciones anteriores.
 
 Si falta cualquiera de estas condiciones, el agente DEBE conservar el estado **En
 implementación**, no declarar cerrada la implementación y reportar explícitamente cada
@@ -174,26 +212,26 @@ Toda pregunta DEBE redactarse de forma clara, directa y entendible por el humano
 
 ### Formato de pregunta con opciones
 
-Pregunta [N de TOTAL] - [tema corto]  
+Pregunta [N de TOTAL] - [tema corto]
 [Enunciado claro, concreto y entendible de la pregunta]
 
 Por qué importa: [1 línea sobre el impacto de decidir mal]
 
-A) [opción concreta con valor específico]  
-B) [opción concreta con valor específico]  Recomendado  
-C) [opción concreta con valor específico]  
+A) [opción concreta con valor específico]
+B) [opción concreta con valor específico] Recomendado
+C) [opción concreta con valor específico]
 D) Otro - escribe tu respuesta
 
 Responde con la letra (A, B, C o D) o escribe tu respuesta libre.
 
 ### Formato de pregunta Sí/No
 
-Pregunta [N de TOTAL] - [tema corto]  
+Pregunta [N de TOTAL] - [tema corto]
 [Enunciado claro y entendible de la pregunta]
 
 Por qué importa: [1 línea]
 
-S) Sí  Recomendado  
+S) Sí Recomendado
 N) No
 
 Responde S o N.
@@ -202,7 +240,7 @@ Responde S o N.
 
 Cada opción A, B o C DEBE ser concreta y ejecutable, nunca genérica.
 
-Ejemplo correcto: 1024px (tablet landscape).  
+Ejemplo correcto: 1024px (tablet landscape).
 Ejemplo prohibido: Un breakpoint estándar.
 
 Las opciones DEBEN ser mutuamente excluyentes: cada una lleva a un resultado de código distinto.
@@ -257,4 +295,4 @@ Está prohibido al agente mover archivos por iniciativa propia, renombrar carpet
 
 La única resolución legítima es la decisión humana documentada vía enmienda constitucional o ajuste explícito de convención local.
 
-**Versión**: 1.1.0 | **Ratificada**: 2026-11-18 | **Última enmienda**: 2026-11-19
+**Versión**: 1.2.0 | **Ratificada**: 2026-11-18 | **Última enmienda**: 2026-07-24

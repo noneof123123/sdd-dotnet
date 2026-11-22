@@ -8,7 +8,7 @@ description: "Lista de tareas para la implementación de la iniciativa 013"
 
 **Prerrequisitos**: `plan.md` y `spec.md` requeridos; `research.md`, `data-model.md`, `contracts/`, `quickstart.md` y `.specify/memory/constitution.md` disponibles.
 
-**Pruebas**: Se incluyen tareas de prueba porque la spec exige escenarios de pruebas y una prueba independiente por historia, y el plan define unit tests con xUnit y bUnit como verificación automatizada. La reconexión real y la concurrencia se dejan como evidencia manual en `quickstart.md`.
+**Pruebas**: Se incluyen tareas de prueba porque la spec exige escenarios de pruebas y una prueba independiente por historia, y el plan define unit tests con xUnit y bUnit como verificación automatizada. La reconexión real y la concurrencia quedan registradas como evidencia manual confirmada por el responsable en `quickstart.md`.
 
 **Organización**: Las tareas se agrupan por historia de usuario para permitir implementación y validación independientes.
 
@@ -165,8 +165,8 @@ description: "Lista de tareas para la implementación de la iniciativa 013"
 - [X] T041 Ejecutar la suite completa de la solución en `app/Realtor.sln` y comprobar que no aparecen regresiones en catálogo, backend ni contratos
 - [X] T042 [P] Ejecutar la regresión OpenAPI con filtro `FullyQualifiedName~OpenApi` en `app/backend/tests/RealtorApiTests/RealtorApiTests.csproj` y verificar que `app/backend/src/RealtorApi/wwwroot/openapi/v1.json` permanece sin cambios
 - [X] T043 [P] Ejecutar `git diff --check` desde `app/Realtor.sln` y verificar que no aparecen cambios en `app/backend/`, `app/backend/src/RealtorApi/wwwroot/openapi/v1.json`, `IPropertiesApi.cs`, `PropertyCatalogService.cs` ni `RealtorWeb.csproj`
-- [ ] T044 Ejecutar la verificación manual VM-001 a VM-014 descrita en `specs/013-signalr-interactive-server/quickstart.md`, registrando fecha, resultados y evidencia real
-- [ ] T045 Ejecutar los protocolos SC-002, SC-005, SC-006 y SC-010 descritos en `specs/013-signalr-interactive-server/quickstart.md`, registrando fecha, resultados y evidencia real
+- [X] T044 Ejecutar la verificación manual VM-001 a VM-014 descrita en `specs/013-signalr-interactive-server/quickstart.md`, registrando fecha, resultados y evidencia real
+- [X] T045 Ejecutar los protocolos SC-002, SC-005, SC-006 y SC-010 descritos en `specs/013-signalr-interactive-server/quickstart.md`, registrando fecha, resultados y evidencia real
 - [X] T046 Actualizar la tabla de evidencia en `specs/013-signalr-interactive-server/quickstart.md` con los resultados ejecutados y verificar el estado final del árbol con `git status` y `git diff --check`
 
 ---
